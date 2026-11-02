@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tergar Groups{% if preview %} (preview){% endif %}</title>
+{% if preview %}<meta name="robots" content="noindex">{% endif %}
+<link rel="stylesheet" href="{{ assets }}/site.css">
+</head>
+<body>
+<main class="page">
+  <header class="blk hdr" style="background-image:linear-gradient(90deg,rgba(12,22,34,.86),rgba(12,22,34,.55)),url('{{ assets }}/indras-net.jpg')">
+    <h1>Tergar Groups</h1>
+    <p class="hdr-sub">Local meditation group pages</p>
+  </header>
+  <section class="blk">
+    <ul class="res-list">
+      {% for g in groups %}<li><a href="{{ g.path }}/">{{ g.full_name }}</a> · {{ g.location }}</li>{% endfor %}
+    </ul>
+  </section>
+  <footer class="blk foot">
+    <p><strong>tergargroups.org is an independent site and is not an official Tergar site.</strong>
+      It carries practice and community information only.</p>
+  </footer>
+</main>
+</body>
+</html>

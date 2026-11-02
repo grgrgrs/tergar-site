@@ -1,0 +1,121 @@
+# Group page data: Venice, Florida  ->  tergargroups.org/us/venice-fl
+# Seeded from the Venice Weekly newsletter of October 30, 2026.
+# Event selections marked "demo" are sample choices for milestone 1; replace freely.
+
+path: us/venice-fl
+name: Tergar Venice
+full_name: Venice Tergar Meditation Group
+location: Venice, Florida
+time_zone: America/New_York
+about: >-
+  Tergar Meditation Groups are based on The Joy of Living teachings of
+  Buddhist teacher Yongey Mingyur Rinpoche. Each weekly gathering includes
+  20 minutes of guided meditation followed by a book discussion or deepening
+  meditation sessions. We invite both experienced and new meditators, from
+  any or no spiritual tradition. Our group is hosted by the Blue Lotus
+  Community House.
+
+# Role address only, and published only once the group has consented.
+# The address itself is kept in data/private/contacts.yaml (not in git).
+contact:
+  consent: false
+
+first_announcement: null
+
+quote: ma-jaya-quiet-mind
+
+next_meeting:
+  date: 2026-11-02
+  title: Meditating on Sound
+  description: >-
+    Sounds can have a naturally soothing quality on the mind. To use sounds as
+    supports for meditation, all you have to do is listen with awareness: as
+    you listen, know that you are listening. We will practice listening to
+    sound as support for meditation.
+  reading: "The Joy of Living, pages 151 to 154, Meditating on Sound. Bring your book if you can; context is given so all may take part."
+  contemplation: What is the difference between hearing a sound and meditating on sound?
+
+# Meeting schedule: this group's own meetings only.
+series:
+  - local: venice-monday
+
+# Program announcements -> Recurring: other Tergar series this group shares.
+# featured: true also shows the series as a featured block.
+recurring:
+  - shared: nectar-wednesday
+    featured: true
+  - shared: dorje-drolo-study
+  - shared: dying-every-day-study
+
+# Program announcements -> Community events (non-Tergar). Venice only, so far.
+community_note: >-
+  These non-Tergar programs at the Blue Lotus Community House are shared for
+  those interested in more community involvement.
+community:
+  - local: blue-lotus-coffee
+  - local: blue-lotus-silent-sitting
+
+local_series:
+  - id: venice-monday
+    title: Venice weekly meeting
+    cadence: weekly
+    weekday: Monday
+    start_time: "16:00"
+    time_zone: America/New_York
+    format: both
+    place: Blue Lotus Community House, 344 Shamrock Boulevard, Venice
+    zoom_access: on_request
+    requires: null
+    notes: Guided meditation followed by book discussion. All are welcome.
+
+  # Non-Tergar community programs (free-text schedule; shown only in the
+  # "Community events (non-Tergar)" list). No personal contacts.
+  - id: blue-lotus-coffee
+    title: Coffee, Tea, and Friends
+    cadence_text: First Tuesday of each month at 10 AM
+    place: Blue Lotus Community House
+    url: https://www.blbmc.org
+
+  - id: blue-lotus-silent-sitting
+    title: Silent Sitting Meditation
+    cadence_text: Tuesdays, 2 to 3:30 PM
+    place: Blue Lotus Community House
+    url: https://www.blbmc.org
+
+# Events: shared events by id (from data/shared-events.yaml) or local events.
+# featured: true shows a full block (max 10). note: a short local note.
+events:
+  - local: wild-world-steady-mind
+    featured: true
+  - shared: finding-freedom-in-lifes-transitions-teachings-on-the-six-ba-2026-12-04
+    featured: true          # demo selection
+  - shared: anytime-anywhere-meditation-aam-5-week-online-workshop-2027-01-19
+    featured: true          # demo selection
+  - shared: the-primordial-secret-dzogchen-instructions-on-trekcho-medit-2026-12-11
+    featured: false         # demo selection (shows the Requires line)
+  - shared: year-end-retreat-dzogchen-trekcho-teachings-2026-12-30
+    featured: false         # demo selection (flagged for review in the collector)
+
+local_events:
+  - id: wild-world-steady-mind
+    title: "Wild World, Steady Mind: 21 Days to Embrace Modern Reality with Clarity and Calm"
+    teachers: Mingyur Rinpoche
+    start: 2026-11-02
+    end: null
+    time: null
+    format: Online (recorded daily videos)
+    place: Online
+    requires: null
+    description: >-
+      A 21-day online program from Sounds True with Mingyur Rinpoche: short
+      recorded teachings and 10-15 minute practices to bring calm and
+      steadiness into everyday life. Begins November 2.
+    url: https://product.soundstrue.com/wild-world-steady-mind/
+
+from_tergar:
+  - buddhism-for-beginners-video
+
+resources:
+  - four-noble-truths
+  - seven-steps-anxiety
+  - being-versus-doing

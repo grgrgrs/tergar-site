@@ -1,0 +1,25 @@
+# Build output (deployed separately; never commit or deploy site-preview)
+site/
+site-preview/
+
+# Private data: contact addresses, approved senders
+data/private/
+
+# Collector working files (contain copied Tergar descriptions)
+data/last_run.json
+data/build-report-*.txt
+docs/*.xlsx
+docs/*.csv
+
+# Reference documents that are not for a public repository
+# (newsletters contain personal emails and Zoom links)
+*.pdf
+
+# Images not cleared for publishing
+images/indras_net1.jpg
+
+# Python / tools
+__pycache__/
+*.pyc
+.wrangler/
+node_modules/

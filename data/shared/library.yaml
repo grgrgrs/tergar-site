@@ -1,0 +1,32 @@
+# Shared choices: quotes, From Tergar items, resource links.
+# Groups choose from these lists by id. Nothing chosen = block hidden.
+# Seeded from the Venice (Oct 30, 2026) and Stuart (Nov 1, 2026) newsletters.
+# Text here is our own short wording; link to Tergar for the full content.
+
+quotes:
+  - id: ma-jaya-quiet-mind
+    text: "Quiet the mind, and the soul will speak."
+    by: Ma Jaya Sati Bhagavati (1940-2012)
+
+from_tergar:
+  - id: buddhism-for-beginners-video
+    title: "Buddhism for Beginners: a new video message from Mingyur Rinpoche"
+    text: Mingyur Rinpoche introduces the four noble truths as a practical path.
+    url: https://www.youtube.com/watch?v=Jo4oWbhJ2ls
+
+resources:
+  - id: four-noble-truths
+    title: How the Four Noble Truths Can Reduce Suffering and Cultivate Happiness
+    url: https://www.youtube.com/watch?v=4gaGdr2FTf4
+  - id: seven-steps-anxiety
+    title: Seven Steps to Overcome Anxiety
+    url: https://www.youtube.com/watch?v=KXbFREjVeRg
+  - id: being-versus-doing
+    title: "Key Points of Meditation: Being Versus Doing"
+    url: https://www.youtube.com/watch?v=ikbukOSX_fg
+  - id: thirty-breath
+    title: 30-Breath Energetic Breathing for Waking Up
+    url: https://www.youtube.com/watch?v=7ejGC3QiIqY
+  - id: meditation-instructions-pdf
+    title: Meditation Instructions for Formal and Daily Life Awareness Practice (PDF)
+    url: https://files.constantcontact.com/a8003a18901/8461118c-285d-42c0-9b00-921988982935.pdf

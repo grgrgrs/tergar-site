@@ -1,0 +1,10 @@
+Header - Name of Group; Tergar logo(s); artwork
+Quote (optional) - a Tergar appropraite quote, attributed
+Announcements (optional) - a timely notice. Could originate from Tergar, or group
+Meeting Schedule - When/Where/How group meets. Is updated as needed by Group manager.
+Program Announcements - a succinct list of upcoming events, Tergar and local. Terse format just-the-facts-ma'am
+Next Meeting Info (optional) - For groups that vary content from meeting to meeting, the content for next meeting. Can include title, description, reading, and contemplation.
+Featured Events 1 and 2 - Block listing for selected events (that usually are also listed in Program Announcements). Optional image; title and speaker(s); date/time; conversational description; link for more info/registration. This is the main item that can lead to length and variability. Two areas, one left and one right, constructed to balance space.
+From Tergar - Things happening from Tergar. Examples: Rinpoche book tour, new JOL app. New videos from Rinpoche on YouTube. Not present if nothing new to say.
+Resource Links - persistent links to videos/documents of ongoing value, usually basics.
+Footer - stuff

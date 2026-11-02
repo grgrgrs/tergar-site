@@ -1,0 +1,174 @@
+<!doctype html>
+{% set g = page.g %}
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ g.name }}{% if page.preview %} (preview){% endif %}</title>
+<meta name="description" content="{{ g.full_name }}, {{ g.location }}: meeting schedule and upcoming events.">
+{% if page.preview %}<meta name="robots" content="noindex">{% endif %}
+<link rel="stylesheet" href="{{ assets }}/site.css">
+</head>
+<body data-zone="{{ zone }}">
+{% if page.preview %}
+<div class="preview-bar">
+  <strong>Preview: not for publishing.</strong> Built {{ built.isoformat() }}.
+  {% if page.issues %}
+  <details><summary>{{ page.issues|length }} item{{ '' if page.issues|length == 1 else 's' }} to review</summary>
+    <ul>{% for i in page.issues %}<li>{{ i }}</li>{% endfor %}</ul>
+  </details>
+  {% else %}No review items.{% endif %}
+</div>
+{% endif %}
+
+<main class="page">
+  <header class="blk hdr" style="order:0;background-image:linear-gradient(90deg,rgba(12,22,34,.86),rgba(12,22,34,.55)),url('{{ assets }}/indras-net.jpg')">
+    <h1>{{ g.name }}</h1>
+    <p class="hdr-sub">{{ g.full_name }} · {{ g.location }}</p>
+  </header>
+
+  {% if g.about %}
+  <section class="blk intro" style="order:1">
+    <p>{{ g.about }}</p>
+  </section>
+  {% endif %}
+
+  {% if page.quote %}
+  <section class="blk quote" style="order:1">
+    <blockquote>“{{ page.quote.text }}”</blockquote>
+    <div class="by">— {{ page.quote.by }}</div>
+  </section>
+  {% endif %}
+
+  <div class="cols">
+    <div class="col colL">
+      {% if page.announcement %}
+      <section class="blk ann" style="order:2">
+        <h2 class="band band-cream">Announcement</h2>
+        <p>{{ page.announcement }}</p>
+        {% if page.preview and page.announcement_flags %}<p class="badge warn">Flag: mentions {{ page.announcement_flags|join(', ') }} with no year, and that month has passed.</p>{% endif %}
+      </section>
+      {% endif %}
+
+      {% if page.schedule %}
+      <section class="blk sched" style="order:3">
+        <h2 class="band band-green">Meeting schedule</h2>
+        {% for s in page.schedule %}
+        <div class="item series" data-dates='{{ s.dates_json }}'>
+          <h3>{{ s.title }}</h3>
+          <div class="meta">{{ s.cadence }} · <span class="s-time">{{ s.time }}</span></div>
+          <div class="meta">{{ s.format }}{% if s.place %} · {{ s.place }}{% endif %}{% if s.host %} · hosted by {{ s.host }}{% endif %}</div>
+          <div class="meta">Next: <span class="s-next">{{ s.next }}</span></div>
+          {% if s.requires %}<div class="requires">{{ s.requires }}</div>{% endif %}
+          {% if s.notes %}<div class="meta">{{ s.notes }}</div>{% endif %}
+          {% if s.zoom_url %}<div><a class="cta" href="{{ s.zoom_url }}">{{ s.zoom_text }}</a></div>
+          {% elif s.zoom_text %}<div class="meta">Zoom link on request</div>{% endif %}
+          {% for l in s.links %}<div><a href="{{ l.url }}">{{ l.title }}</a></div>{% endfor %}
+        </div>
+        {% endfor %}
+        <p class="small">Times are shown in the group's local time, then UTC.
+        {% if page.zoom_on_request %}To request a Zoom link,
+        {% if page.contact %}email <a href="mailto:{{ page.contact.address }}">{{ page.contact.address }}</a>.{% else %}contact the group.{% endif %}{% endif %}</p>
+      </section>
+      {% endif %}
+
+      {% if page.announcements or page.recurring or page.community %}
+      <section class="blk pa" style="order:5" id="pa">
+        <h2 class="band band-aqua">Program announcements</h2>
+        {% if page.announcements %}
+        {% if page.recurring or page.community %}<div class="pa-sub">Upcoming events</div>{% endif %}
+        <ul class="pa-list" id="pa-events">
+          {% for x in page.announcements %}
+          <li data-last="{{ x.last.isoformat() if x.last else '' }}">
+            <span class="pa-date">{{ x.date_text }}</span>
+            {% if x.source_url %}<a href="{{ x.source_url }}">{{ x.title }}</a>{% elif x.registration_url %}<a href="{{ x.registration_url }}">{{ x.title }}</a>{% else %}{{ x.title }}{% endif %}
+            {% if x.time %}<span class="meta"> · {{ x.time }}</span>{% endif %}
+            {% if not x.local %}<span class="meta"> · from Tergar</span>{% endif %}
+            {% if x.note %}<span class="tag">local note</span>{% endif %}
+            {% if x.access_kind in ('requires', 'unknown') %}<div class="requires small">{{ x.access }}</div>{% endif %}
+            {% for b in x.badges %}<div class="badge warn">{{ b }}</div>{% endfor %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% if page.recurring %}
+        <div class="pa-sub">Recurring</div>
+        <ul class="pa-list">
+          {% for s in page.recurring %}
+          <li class="series" data-dates='{{ s.dates_json }}'>
+            <strong>{{ s.title }}</strong>{% if s.host %} with {{ s.host }}{% endif %}.
+            {{ s.cadence }}, <span class="s-time">{{ s.time }}</span>. {{ s.format }}{% if s.zoom_text and not s.zoom_url %} (Zoom link on request){% endif %}.
+            <span class="meta">Next: <span class="s-next">{{ s.next }}</span></span>
+            {% if s.requires %}<div class="requires small">{{ s.requires }}</div>{% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% if page.community %}
+        <div class="pa-sub">Community events (non-Tergar)</div>
+        {% if page.community_note %}<p class="small">{{ page.community_note }}</p>{% endif %}
+        <ul class="pa-list">
+          {% for s in page.community %}
+          <li><strong>{{ s.title }}</strong>. {{ s.cadence }}{% if s.place %}, {{ s.place }}{% endif %}.
+            {% if s.url %}<a href="{{ s.url }}">More information</a>{% endif %}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </section>
+      {% endif %}
+
+      {% for x in page.featured if x.side == 'L' %}{% include 'featured.html.j2' %}{% endfor %}
+      <div class="feat-anchor" data-side="L" hidden></div>
+
+      {% if page.from_tergar %}
+      <section class="blk tergar" style="order:40">
+        <h2 class="band band-cream">From Tergar</h2>
+        {% for t in page.from_tergar %}
+        <div class="item">
+          <h3><a href="{{ t.url }}">{{ t.title }}</a></h3>
+          {% if t.text %}<div class="meta">{{ t.text }}</div>{% endif %}
+        </div>
+        {% endfor %}
+      </section>
+      {% endif %}
+      <div class="filler" aria-hidden="true" style="background-image:url('{{ assets }}/indras-net.jpg')"></div>
+    </div>
+
+    <div class="col colR">
+      {% if page.next_meeting %}
+      {% set nm = page.next_meeting %}
+      <section class="blk next" style="order:4" data-date="{{ nm.date.isoformat() if nm.date else '' }}">
+        <h2 class="band band-green">Next meeting{% if nm.day %}: {{ nm.day }}{% endif %}</h2>
+        <h3 class="title-blue">{{ nm.title }}</h3>
+        {% if nm.description %}<p>{{ nm.description }}</p>{% endif %}
+        {% if nm.reading %}<div class="sub-h">Reading</div><p>{{ nm.reading }}</p>{% endif %}
+        {% if nm.contemplation %}<div class="contemplation"><div class="sub-h">Contemplation</div><p>{{ nm.contemplation }}</p></div>{% endif %}
+      </section>
+      {% endif %}
+
+      {% for x in page.featured if x.side == 'R' %}{% include 'featured.html.j2' %}{% endfor %}
+      <div class="feat-anchor" data-side="R" hidden></div>
+
+      {% if page.resources %}
+      <section class="blk res" style="order:41">
+        <h2 class="band band-lavender">Resource links</h2>
+        <ul class="res-list">
+          {% for r in page.resources %}<li><a href="{{ r.url }}">{{ r.title }}</a></li>{% endfor %}
+        </ul>
+      </section>
+      {% endif %}
+      <div class="filler" aria-hidden="true" style="background-image:url('{{ assets }}/indras-net.jpg')"></div>
+    </div>
+  </div>
+
+  <footer class="blk foot" style="order:50">
+    <p><strong>tergargroups.org is an independent site and is not an official Tergar site.</strong>
+      It carries practice and community information only.</p>
+    <p>Event information comes from Tergar and links to its source page. Event summaries are written for this site.</p>
+    {% if page.contact %}<p>Contact: <a href="mailto:{{ page.contact.address }}">{{ page.contact.address }}</a>{% if page.contact.draft %} <span class="badge warn">preview only: group consent not yet recorded</span>{% endif %}</p>{% endif %}
+    <p class="small">Updated {{ built.isoformat() }}</p>
+  </footer>
+</main>
+<script src="{{ assets }}/site.js"></script>
+</body>
+</html>

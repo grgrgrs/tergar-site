@@ -1,0 +1,82 @@
+# Shared meeting series (Tergar coordinator role: George maintains these).
+# Groups list them by id; groups can't change these records.
+# Seeded from the Venice (Oct 30, 2026) and Stuart (Nov 1, 2026) newsletters.
+#
+# cadence: weekly | every_other_week (needs anchor_date) | monthly_weeks (needs weeks)
+# format: in_person | zoom | both
+# zoom_access: on_request (default) | shown (needs zoom_url; published on the page)
+# Zoom links are not stored here while access is "on_request".
+
+series:
+  - id: nectar-wednesday
+    title: Nectar of the Path practice
+    host: Tergar Portland
+    cadence: weekly
+    weekday: Wednesday
+    start_time: "12:30"
+    time_zone: America/New_York
+    format: zoom
+    place: Online (Zoom)
+    zoom_access: on_request
+    requires: null
+    description: >-
+      The Nectar of the Path is a short practice text composed by Mingyur
+      Rinpoche during a retreat in 2010. It includes chanting, contemplation,
+      visualization and meditation, leading through the Four Thoughts, Refuge,
+      Bodhichitta and Guru Yoga.
+    notes: All are welcome. New to the practice? Start with the introductory talk by Tim Olmsted.
+    links:
+      - title: Introductory talk by Tim Olmsted
+        url: https://www.youtube.com/watch?v=UzPE0X2CAGY
+
+  - id: nectar-florida-monday
+    title: Florida Regional Nectar of the Path practice
+    host: null
+    cadence: weekly
+    weekday: Monday
+    start_time: "18:30"
+    time_zone: America/New_York
+    format: zoom
+    place: Online (Zoom)
+    zoom_access: on_request
+    requires: null
+    description: >-
+      The Nectar of the Path is a short practice text composed by Mingyur
+      Rinpoche during a retreat in 2010. It includes chanting, contemplation,
+      visualization and meditation, leading through the Four Thoughts, Refuge,
+      Bodhichitta and Guru Yoga.
+    notes: All are welcome. Sessions are online only.
+    links:
+      - title: What Is the Nectar of the Path? (video)
+        url: https://www.youtube.com/watch?v=nZfH89XmG1E
+
+  - id: dorje-drolo-study
+    title: Dorje Drolö Study Group
+    host: Tergar Stuart
+    cadence: monthly_weeks
+    weeks: [2, 4]
+    weekday: Monday
+    start_time: "16:00"
+    time_zone: America/New_York
+    format: zoom
+    place: Online (Zoom)
+    zoom_access: on_request
+    requires: Vajrayana Online subscription
+    start_date: 2026-10-12
+    notes: null
+    links: []
+
+  - id: dying-every-day-study
+    title: "Dying Every Day: Essence of the Bardos Study Group"
+    host: Tergar Stuart
+    cadence: monthly_weeks
+    weeks: [2, 4]
+    weekday: Friday
+    start_time: "11:00"
+    time_zone: America/New_York
+    format: zoom
+    place: Online (Zoom)
+    zoom_access: on_request
+    requires: Vajrayana Online subscription
+    notes: null
+    links: []

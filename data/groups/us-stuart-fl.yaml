@@ -1,0 +1,102 @@
+# Group page data: Stuart, Florida  ->  tergargroups.org/us/stuart-fl
+# Seeded from the Tergar Stuart newsletter of November 1, 2026.
+# Event selections marked "demo" are sample choices for milestone 1; replace freely.
+
+path: us/stuart-fl
+name: Tergar Stuart
+full_name: Tergar Stuart Meditation Community
+location: Stuart, Florida
+time_zone: America/New_York
+about: >-
+  The Tergar Stuart Meditation Community is based on the Joy of Living
+  teachings of Yongey Mingyur Rinpoche. We learn how to calm the mind, open
+  the heart, and awaken wisdom. All are welcome.
+
+# Role address only, and published only once the group has consented.
+# The address itself is kept in data/private/contacts.yaml (not in git).
+contact:
+  consent: false
+
+first_announcement: Please join Tergar Stuart and enjoy our new offerings, listed in the meeting schedule.
+
+quote: null
+
+next_meeting: null
+
+# Meeting schedule: this group's own meetings only (Stuart hosts the two
+# study groups, so they belong here).
+series:
+  - local: stuart-jol-online
+  - local: stuart-awareness-in-person
+  - shared: dorje-drolo-study
+  - shared: dying-every-day-study
+
+# Program announcements -> Recurring (featured: also a featured block)
+recurring:
+  - shared: nectar-florida-monday
+    featured: true
+
+local_series:
+  - id: stuart-jol-online
+    title: "Joy of Living Online: Awareness in Daily Life"
+    cadence: monthly_weeks
+    weeks: [1, 3]
+    weekday: Sunday
+    start_time: "15:00"
+    time_zone: America/New_York
+    format: zoom
+    place: Online (Zoom)
+    zoom_access: on_request
+    requires: null
+    start_date: 2026-11-01
+    notes: Open to all. Bring a cup of tea or coffee and join us.
+
+  - id: stuart-awareness-in-person
+    title: How to Live with More Awareness, Compassion, and Wisdom
+    cadence: monthly_weeks
+    weeks: [2, 4]
+    weekday: Tuesday
+    start_time: "11:30"
+    time_zone: America/New_York
+    format: in_person
+    place: YMCA, Wicina Center
+    zoom_access: on_request
+    requires: null
+    start_date: 2026-11-10
+    notes: Open to all.
+
+events:
+  - local: wild-world-steady-mind
+    featured: true
+  - shared: finding-freedom-in-lifes-transitions-teachings-on-the-six-ba-2026-12-04
+    featured: true
+  - shared: calming-the-mind-joy-of-living-level-1-2027-01-11
+    featured: false         # demo selection
+  - shared: path-of-liberation-level-5-embodying-pure-awareness-2027-02-12
+    featured: false         # demo selection (shows the Requires line)
+
+local_events:
+  - id: wild-world-steady-mind
+    title: "Wild World, Steady Mind: 21 Days to Embrace Modern Reality with Clarity and Calm"
+    teachers: Mingyur Rinpoche
+    start: 2026-11-02
+    end: null
+    time: null
+    format: Online (recorded daily videos)
+    place: Online
+    requires: null
+    description: >-
+      A 21-day online program from Sounds True with Mingyur Rinpoche: short
+      recorded teachings and 10-15 minute practices to bring calm and
+      steadiness into everyday life. Begins November 2.
+    url: https://product.soundstrue.com/wild-world-steady-mind/
+
+from_tergar:
+  - buddhism-for-beginners-video
+
+resources:
+  - four-noble-truths
+  - seven-steps-anxiety
+  - being-versus-doing
+  - thirty-breath
+  - meditation-instructions-pdf
