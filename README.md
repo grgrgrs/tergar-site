@@ -111,9 +111,14 @@ Steps, from this folder:
 ```
 py -3.9 tergar_events.py                      (1. collect events)
 py -3.9 tools\export_shared_events.py         (2. update the shared events file)
-py -3.9 tools\build_site.py                   (3. preview build -> site-preview\)
-py -3.9 tools\build_site.py --mode publish    (4. publish build -> site\)
+npm install                                   (once: installs the page builder's one library)
+npm run preview                               (3. preview build -> site-preview\)
+npm run build                                 (4. publish build -> site\)
 ```
+
+The page builder is JavaScript (`lib\render.js`, `scripts\build.mjs`, needs
+Node.js). The same renderer is used by the dashboard, so its previews match
+what publishes. The events collector and the export step stay in Python.
 
 Open `site-preview\us\venice-fl\index.html` in a browser to see a page.
 

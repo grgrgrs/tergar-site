@@ -65,6 +65,20 @@ DECISIONS SINCE THE HANDOFF (these take precedence)
   Tergar listings" date.
 - Pilot groups: Venice and Stuart only (the prototype's "Pilot group 3" is
   sample data).
+- Dashboard (handoff open decision 2): HOSTED, so other test users can edit
+  their own group pages. Approval still gates everything that publishes.
+  Sign-in through Cloudflare Access (no login system of our own).
+  Address: admin.tergargroups.org.
+  Views: Group Dashboard (the page in edit mode; edits become pending
+  changes) and Approvals (pending changes with previews; approve/reject),
+  per group. Shared Library view for George only (coordinator). The public
+  Group Page is the live site.
+  Roles: one person per group, who is both editor and approver for that
+  group in the pilot. George (coordinator) sees all groups, can approve for
+  any group, and maintains the shared library and summary review.
+  Approved changes are committed to GitHub (audit trail); a GitHub Action
+  rebuilds and deploys the pages (also daily). Pending changes, the editor
+  list and contact addresses are stored privately, never in the public repo.
 
 
 ============================================================================

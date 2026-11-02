@@ -1,0 +1,13 @@
+{
+  "name": "tergar-groups",
+  "private": true,
+  "type": "module",
+  "description": "Living Group Pages on tergargroups.org: page renderer, site build, dashboard worker",
+  "scripts": {
+    "build": "node scripts/build.mjs --mode publish",
+    "preview": "node scripts/build.mjs --mode preview"
+  },
+  "dependencies": {
+    "js-yaml": "4.1.0"
+  }
+}
