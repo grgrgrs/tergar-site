@@ -23,3 +23,7 @@ __pycache__/
 *.pyc
 .wrangler/
 node_modules/
+
+# Dashboard local settings (secrets)
+dashboard/.dev.vars
+dashboard/.wrangler/

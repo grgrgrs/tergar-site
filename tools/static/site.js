@@ -1,12 +1,13 @@
 /* Living Group Pages: keep a static page current and balanced.
    - Past events drop off (dates compared in the group's own time zone).
-   - Featured events are re-laid out with strict alternation, closest first.
+   - Featured blocks are placed, in date order, into the shorter column (measured).
    - Meeting series show their next date from the dates computed at build time.
    - Columns are balanced by measuring rendered heights; the shorter column
      gets the Indra's net filler. Measure, don't estimate. */
 (function () {
   "use strict";
-  var zone = document.body.getAttribute("data-zone") || "UTC";
+  var zEl = document.querySelector("[data-zone]");
+  var zone = (zEl && zEl.getAttribute("data-zone")) || "UTC";
   var today;
   try {
     today = new Intl.DateTimeFormat("en-CA", { timeZone: zone, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());

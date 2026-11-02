@@ -1,0 +1,29 @@
+# Living Group Pages dashboard: admin.tergargroups.org
+# Protected by Cloudflare Access (team: fragrant-mud-12dc). The Worker also
+# verifies the Access token itself (src/auth.js).
+#
+# Secrets (set with `wrangler secret put NAME`, never committed):
+#   POLICY_AUD  the Access application's Audience (AUD) tag
+#   USERS       JSON: {"email": {"role": "coordinator"} | {"groups": ["us/venice-fl"]}}
+#   CONTACTS    YAML: contacts: { us/venice-fl: address, ... }   (same as data/private/contacts.yaml)
+# Local development: put the same names, plus DEV_EMAIL, in dashboard/.dev.vars (gitignored).
+
+name = "tergar-dashboard"
+main = "src/index.js"
+compatibility_date = "2025-06-01"
+workers_dev = false
+
+routes = [
+  { pattern = "admin.tergargroups.org", custom_domain = true }
+]
+
+[vars]
+TEAM_DOMAIN = "fragrant-mud-12dc.cloudflareaccess.com"
+GITHUB_REPO = "grgrgrs/tergar-site"
+GITHUB_BRANCH = "main"
+GROUPS = '["us/venice-fl", "us/stuart-fl"]'
+
+[[rules]]
+type = "Text"
+globs = ["**/*.css", "**/site.js", "**/dashboard.client.js"]
+fallthrough = true

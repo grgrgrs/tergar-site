@@ -1,0 +1,27 @@
+/* Dashboard chrome (the group page itself uses site.css) */
+body.dash{background:var(--bg)}
+.dash-top{background:var(--page);border-bottom:1px solid var(--line);padding:10px 16px;position:sticky;top:0;z-index:5}
+.dash-row{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.dash-sub{font-size:13px;color:var(--muted)}
+.dash-nav a{display:inline-block;padding:6px 14px;border-radius:999px;color:var(--muted);font-weight:700;margin-left:4px}
+.dash-nav a.on{background:var(--title);color:#fff;text-decoration:none}
+.dash-main{max-width:960px;margin:16px auto 40px;padding:0 16px}
+.dash-card{background:var(--page);border:1px solid var(--line);border-radius:6px;padding:14px 18px;margin-bottom:14px}
+.dash-card h1{font-size:22px;margin-bottom:8px}
+.dash-card h2{font-size:17px;margin:16px 0 6px}
+.dash-note{background:var(--cream)}
+.dash-issues{margin-top:8px;font-size:14px}
+.dash-list{padding-left:20px;margin:6px 0}
+.dash-list li{margin-bottom:4px}
+.dash-table{overflow-x:auto}
+.dash-table table{width:100%;border-collapse:collapse;font-size:14px}
+.dash-table th,.dash-table td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.dash-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+#page-wrap .page{margin-top:0}
+/* Edit buttons on blocks */
+.editing .blk{position:relative;outline:1px dashed var(--title);outline-offset:3px}
+.editing .hdr{outline-color:#fff}
+.ed{position:absolute;top:6px;right:6px;font:600 12px/1 Arial,sans-serif;padding:5px 10px;border-radius:4px;
+  border:1px solid var(--title);background:var(--page);color:var(--title);cursor:pointer;z-index:2}
+.ed[disabled]{opacity:.55;cursor:not-allowed}
+.editing .empty{opacity:.75}
