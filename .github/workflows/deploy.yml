@@ -43,7 +43,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Build (publish mode: reviewed content only)
+      - name: "Build (publish mode, reviewed content only)"
         run: node scripts/build.mjs --mode publish
         env:
           CONTACTS_YAML: ${{ secrets.CONTACTS_YAML }}
