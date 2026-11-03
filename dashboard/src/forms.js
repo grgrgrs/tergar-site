@@ -491,7 +491,9 @@ const review = {
       "Has prerequisites" comes from the collector (the source page says restricted or prerequisites apply). Set a subscription label by hand. The event link is the page the title, register link and labels open; it is chosen automatically (never the whole Tergar calendar) unless you enter one.</p>
     <div class="dash-table"><table><thead><tr><th>Event</th><th>Flag</th><th>Summary</th><th>Labels and link</th></tr></thead><tbody>
     ${list.map((e) => `<tr><td><a href="${esc(eventLink(e) || "#")}" target="_blank" rel="noopener">${esc(e.title)}</a><div class="small">${esc(e.start || e.date_text || "no dates")}</div>${e.restricted === "yes" ? `<div><span class="badge">has prerequisites</span></div>` : ""}</td>
-      <td>${e.needs_review ? `<div class="small">${esc(e.needs_review)}</div>${check(`rv-${esc(e.id)}-cleared`, "Cleared to publish", !!e.review_cleared)}` : `<span class="small">none</span>`}</td>
+      <td>${e.needs_review ? (e.review_cleared
+        ? `${check(`rv-${esc(e.id)}-cleared`, "Cleared to publish", true)}<details class="small"><summary>Why it was flagged</summary>${esc(e.needs_review)}</details>`
+        : `<div class="small">${esc(e.needs_review)}</div>${check(`rv-${esc(e.id)}-cleared`, "Cleared to publish", false)}`) : `<span class="small">none</span>`}</td>
       <td>${e.summary ? `<div class="small summary-text">${esc(e.summary)}</div>${check(`rv-${esc(e.id)}-approved`, "Approved", !!e.summary_approved)}` : `<span class="small">no summary</span>`}</td>
       <td>${select(`rv-${esc(e.id)}-subscription`, "Subscription", SUBS, e.subscription || "")}
         ${input(`rv-${esc(e.id)}-event_url`, "Event link (optional)", e.event_url || "", { max: 400, placeholder: "automatic", hint: `Now: ${esc(eventLink(e) || "none")}` })}</td></tr>`).join("")}

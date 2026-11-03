@@ -377,7 +377,7 @@ async function libraryView(user, env, url) {
     <td><a href="${esc(eventLink(e) || "#")}" target="_blank" rel="noopener">${esc(e.title)}</a></td>
     <td>${esc(e.start || e.date_text || "no dates")}${e.end && e.end !== e.start ? " to " + esc(e.end) : ""}</td>
     <td>${e.restricted === "yes" ? "yes" : "no"}</td>
-    <td>${e.needs_review ? `<span class="badge warn">${esc(e.needs_review)}</span><div class="small">cleared: ${yes(e.review_cleared)}</div>` : "no"}</td>
+    <td>${!e.needs_review ? "no" : e.review_cleared ? `<span class="small" title="${esc(e.needs_review)}">cleared</span>` : `<span class="badge warn">${esc(e.needs_review)}</span>`}</td>
     <td>${e.summary ? yes(e.summary_approved) : "none"}</td>
     <td>${usedBy[e.id] ? `${usedBy[e.id].length}${usedBy[e.id].some(Boolean) ? ` (${usedBy[e.id].filter(Boolean).length} featured)` : ""}` : "-"}</td></tr>`).join("");
   const series = shared.sharedSeriesList.map((s) => `<li><strong>${esc(s.title)}</strong> · ${esc(s.weekday)} ${esc(s.start_time)} · ${esc(s.format)}${s.has_prerequisites ? " · has prerequisites" : ""}${s.subscription ? " · " + esc(s.subscription) : ""}</li>`).join("");
