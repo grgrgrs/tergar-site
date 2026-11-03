@@ -252,7 +252,7 @@ events:
     online or in person. It is open to everyone, with live interpretation in seven languages.
   needs_review: null
   review_cleared: false
-  summary_approved: false
+  summary_approved: true
   collector_source: calendar
   date_fetched: '2026-11-02'
 - id: the-primordial-secret-dzogchen-instructions-on-trekcho-medit-2026-12-11
