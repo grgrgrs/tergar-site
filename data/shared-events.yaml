@@ -38,10 +38,15 @@ events:
     Vajrayana Online membership. It is restricted to people who have received pointing out instructions
     on the nature of mind from a qualified lineage teacher.
   needs_review: No exact dates listed ('SEP 2026–JUL 2027'); kept as month text
-  review_cleared: false
-  summary_approved: false
+  review_cleared: true
+  summary_approved: true
   collector_source: vajrayana
   date_fetched: '2026-11-02'
+  summary_edited: The Dorje Drolö Immersion Course is an online, 11-month immersion with monthly
+    video teachings from Mingyur Rinpoche, weekly live instruction from Khenpo Kunga, and practice
+    guidance from Tergar guides. It runs from September 2026 to July 2027, and it is included in a
+    Vajrayana Online membership. It is restricted to people who have received pointing out
+    instructions on the nature of mind from a qualified lineage teacher.
 - id: 開心禪一階-calming-the-mind-joy-of-living-level-1-2026-11-06
   title: 開心禪一階 (Calming the Mind - Joy of Living Level 1)
   start: '2026-11-06'
