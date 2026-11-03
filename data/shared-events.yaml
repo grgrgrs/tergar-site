@@ -99,9 +99,10 @@ events:
     is open to everyone, with no prerequisites and no restrictions, and you can attend online.
   needs_review: null
   review_cleared: false
-  summary_approved: false
+  summary_approved: true
   collector_source: calendar
   date_fetched: '2026-11-02'
+  event_url: https://www.helloasso.com/associations/tergar-paris/evenements/joie-de-vivre-1-2026-1
 - id: practicing-the-path-of-liberation-level-5-workshop-with-anto-2026-11-09
   title: Practicing the Path of Liberation Level 5 Workshop with Antonia Sumbundu
   start: '2026-11-09'
