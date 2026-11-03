@@ -55,6 +55,9 @@ a.btn-primary:hover{text-decoration:none;opacity:.9}
 form.inline{display:inline}
 .errors li{color:#c0392b;margin-bottom:4px}
 .summary-text{max-width:420px;margin-bottom:4px}
+details.edit-sum{margin-top:4px;max-width:420px}
+details.edit-sum summary{cursor:pointer;color:#1a5fb4;font-size:13px}
+details.edit-sum textarea{width:100%;box-sizing:border-box}
 /* Change preview */
 .diff{border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:8px 10px}
 .diff.same{opacity:.6}

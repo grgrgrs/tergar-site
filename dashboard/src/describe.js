@@ -117,6 +117,7 @@ export function describeChange(change, { before, after, sharedBefore, sharedAfte
         const t = q(titles[op.path[1].id] || op.path[1].id);
         if (op.path[2] === "review_cleared") out.push(op.value ? line("added", "Cleared", `${t} cleared for publishing`) : line("removed", "Held", `${t} held back for review again`));
         if (op.path[2] === "summary_approved") out.push(op.value ? line("added", "Approved", `Summary approved for ${t}`) : line("removed", "Withdrawn", `Summary approval withdrawn for ${t}`));
+        if (op.path[2] === "summary_edited") out.push(op.value ? line("changed", "Summary", `New summary for ${t}: \u201c${esc(op.value)}\u201d`) : line("changed", "Summary", `${t} goes back to the collector's summary`));
         if (op.path[2] === "subscription") out.push(op.value ? line("changed", "Label", `${t} gets a ${esc(op.value)} label`) : line("removed", "Label", `Subscription label removed from ${t}`));
         if (op.path[2] === "event_url") out.push(op.value ? line("changed", "Link", `Event link for ${t}: ${esc(op.value)}`) : line("changed", "Link", `Event link for ${t} chosen automatically again`));
       }

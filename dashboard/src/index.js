@@ -10,7 +10,7 @@
 // deploys the public site. Nothing reaches the live site without approval.
 
 import yaml from "js-yaml";
-import { buildGroup, renderGroupBody, todayIn, esc, isoDate, eventLink } from "../../lib/render.js";
+import { buildGroup, renderGroupBody, todayIn, esc, isoDate, eventLink, summaryOf } from "../../lib/render.js";
 import { identify } from "./auth.js";
 import { loadShared, loadGroup, groupFile, sharedFrom, listPending, getPending, putPending, deletePending, SHARED_EVENTS, LIBRARY } from "./data.js";
 import { applyToObject, applyToYaml, getAt } from "./ops.js";
@@ -378,7 +378,7 @@ async function libraryView(user, env, url) {
     <td>${esc(e.start || e.date_text || "no dates")}${e.end && e.end !== e.start ? " to " + esc(e.end) : ""}</td>
     <td>${e.restricted === "yes" ? "yes" : "no"}</td>
     <td>${!e.needs_review ? "no" : e.review_cleared ? `<span class="small" title="${esc(e.needs_review)}">cleared</span>` : `<span class="badge warn">${esc(e.needs_review)}</span>`}</td>
-    <td>${e.summary ? yes(e.summary_approved) : "none"}</td>
+    <td>${summaryOf(e) ? yes(e.summary_approved) + (e.summary_edited ? " (edited)" : "") : "none"}</td>
     <td>${usedBy[e.id] ? `${usedBy[e.id].length}${usedBy[e.id].some(Boolean) ? ` (${usedBy[e.id].filter(Boolean).length} featured)` : ""}` : "-"}</td></tr>`).join("");
   const series = shared.sharedSeriesList.map((s) => `<li><strong>${esc(s.title)}</strong> · ${esc(s.weekday)} ${esc(s.start_time)} · ${esc(s.format)}${s.has_prerequisites ? " · has prerequisites" : ""}${s.subscription ? " · " + esc(s.subscription) : ""}</li>`).join("");
   const lib = shared.library;

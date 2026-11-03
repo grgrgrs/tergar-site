@@ -4,7 +4,7 @@
 // only script adds rows from a <template>. Parsing validates everything:
 // the dashboard never trusts the browser.
 
-import { esc, eventLink, isoDate } from "../../lib/render.js";
+import { esc, eventLink, isoDate, summaryOf } from "../../lib/render.js";
 import { groupFile, SHARED_EVENTS, LIBRARY } from "./data.js";
 
 export class FormError extends Error {
@@ -396,7 +396,7 @@ const events = {
     const list = shared.sharedEventsList.filter((e) => chosen[e.id] || !e.last_date || String(e.last_date) >= today)
       .sort((a, b) => String(a.sort_date || "9999").localeCompare(String(b.sort_date || "9999")));
     const held = (e) => e.needs_review && !e.review_cleared;
-    const ready = (e) => !!(e.summary && e.summary_approved);
+    const ready = (e) => !!(summaryOf(e) && e.summary_approved);
     const row = (e) => {
       const c = chosen[e.id] || {};
       const flags = [
@@ -435,7 +435,7 @@ const events = {
     for (const e of shared.sharedEventsList) {
       const show = on(fd, `ev-${e.id}-show`), feat = on(fd, `ev-${e.id}-featured`);
       if (!show && !feat) continue;
-      if (feat && !(e.summary && e.summary_approved)) { errs.push(`"${e.title}" can't be featured until its summary is approved; it can be listed`); continue; }
+      if (feat && !(summaryOf(e) && e.summary_approved)) { errs.push(`"${e.title}" can't be featured until its summary is approved; it can be listed`); continue; }
       if (feat) featured++;
       selections.push(sel("shared", e.id, feat, text(fd, `ev-${e.id}-note`, 300)));
     }
@@ -494,7 +494,10 @@ const review = {
       <td>${e.needs_review ? (e.review_cleared
         ? `${check(`rv-${esc(e.id)}-cleared`, "Cleared to publish", true)}<details class="small"><summary>Why it was flagged</summary>${esc(e.needs_review)}</details>`
         : `<div class="small">${esc(e.needs_review)}</div>${check(`rv-${esc(e.id)}-cleared`, "Cleared to publish", false)}`) : `<span class="small">none</span>`}</td>
-      <td>${e.summary ? `<div class="small summary-text">${esc(e.summary)}</div>${check(`rv-${esc(e.id)}-approved`, "Approved", !!e.summary_approved)}` : `<span class="small">no summary</span>`}</td>
+      <td>${summaryOf(e) ? `<div class="small summary-text">${esc(summaryOf(e))}${e.summary_edited ? ` <span class="badge">edited</span>` : ""}</div>${check(`rv-${esc(e.id)}-approved`, "Approved", !!e.summary_approved)}` : `<span class="small">no summary</span>`}
+        <details class="edit-sum"><summary>${summaryOf(e) ? "Edit summary" : "Write a summary"}</summary>
+          ${textarea(`rv-${esc(e.id)}-summary`, "Summary", summaryOf(e), { rows: 6, max: 1200, hint: "Saving a changed summary also approves it." })}
+          ${e.summary_edited && e.summary ? check(`rv-${esc(e.id)}-revert`, "Use the collector's text instead (it will need approving again)", false) : ""}</details></td>
       <td>${select(`rv-${esc(e.id)}-subscription`, "Subscription", SUBS, e.subscription || "")}
         ${input(`rv-${esc(e.id)}-event_url`, "Event link (optional)", e.event_url || "", { max: 400, placeholder: "automatic", hint: `Now: ${esc(eventLink(e) || "none")}` })}</td></tr>`).join("")}
     </tbody></table></div>`;
@@ -506,10 +509,19 @@ const review = {
         const want = on(fd, `rv-${e.id}-cleared`);
         if (want !== !!e.review_cleared) ops.push({ path: ["events", { id: e.id }, "review_cleared"], value: want });
       }
-      if (e.summary) {
-        const want = on(fd, `rv-${e.id}-approved`);
-        if (want !== !!e.summary_approved) ops.push({ path: ["events", { id: e.id }, "summary_approved"], value: want });
+      // Summary: the coordinator's edited text is kept apart from the
+      // collector's (summary_edited), so a new collector run never replaces it.
+      const typed = text(fd, `rv-${e.id}-summary`, 1200);
+      let want = on(fd, `rv-${e.id}-approved`), shown = summaryOf(e);
+      if (on(fd, `rv-${e.id}-revert`) || (!typed && e.summary_edited)) {
+        ops.push({ path: ["events", { id: e.id }, "summary_edited"], value: undefined });
+        shown = e.summary || null; want = false;
+      } else if (typed && typed !== clean(summaryOf(e))) {
+        ops.push({ path: ["events", { id: e.id }, "summary_edited"], value: typed });
+        shown = typed; want = true;
       }
+      if (shown && want !== !!e.summary_approved) ops.push({ path: ["events", { id: e.id }, "summary_approved"], value: want });
+      if (!shown && e.summary_approved) ops.push({ path: ["events", { id: e.id }, "summary_approved"], value: false });
       const sub = subOf(text(fd, `rv-${e.id}-subscription`, 3));
       if (sub !== subOf(e.subscription)) ops.push({ path: ["events", { id: e.id }, "subscription"], value: sub || undefined });
       const url = checkUrl(errs, `"${e.title}"`, text(fd, `rv-${e.id}-event_url`, 400)) || null;

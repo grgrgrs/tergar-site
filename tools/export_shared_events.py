@@ -119,8 +119,13 @@ def main():
             "summary": clean_value(r.get("Summary")),
             "needs_review": None if needs == "No" else re.sub(r"^Yes:\s*", "", needs),
             "review_cleared": bool(prev.get("review_cleared", False)),
+            # an edited summary keeps its approval; the collector's text needs
+            # approving again whenever it changes
             "summary_approved": bool(prev.get("summary_approved", False))
-                                and prev.get("summary") == clean_value(r.get("Summary")),
+                                and (bool(prev.get("summary_edited"))
+                                     or prev.get("summary") == clean_value(r.get("Summary"))),
+            # the coordinator's own summary text (dashboard); never overwritten
+            "summary_edited": prev.get("summary_edited") or None,
             # curated by hand in the dashboard; kept when the file is regenerated
             "subscription": prev.get("subscription") if prev.get("subscription") in ("JOL", "VOL") else None,
             "event_url": prev.get("event_url") or None,
