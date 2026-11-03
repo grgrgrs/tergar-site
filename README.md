@@ -147,7 +147,7 @@ signs in to their own group; the coordinator sees every group.
    change to this repository (the change record); **Discard** drops it.
    Saving a block again replaces its earlier pending change.
 3. **Tergar library** (coordinator only; editors never see it): vet Tergar
-   events (clear flags, approve summaries, set labels and links) and edit the
+   events (clear flags, approve or edit summaries, set labels and links) and edit the
    quotes, From Tergar items and resource links. Changes here publish in one
    step: check the summary, then **Save and publish**.
 
