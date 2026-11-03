@@ -128,8 +128,38 @@ Open `site-preview\us\venice-fl\index.html` in a browser to see a page.
   - summaries, until you set `summary_approved: true`
   - contact addresses, until the group's `consent: true`
 
-  Set those flags in `data\shared-events.yaml` (events and summaries) and in the group file (contact consent).
+  Set those flags in the dashboard (Shared Library, and each group's header block), or by hand in `data\shared-events.yaml` and the group file.
 - Each build writes a report to `data\build-report-preview.txt` or `data\build-report-publish.txt`.
+
+## Dashboard (milestone 2): admin.tergargroups.org
+
+Editors sign in through Cloudflare Access (an emailed one-time code). Each
+signs in to their own group; the coordinator sees every group.
+
+1. **Groups:** open a group and click **Edit** on any block. Saving creates a
+   *pending change*; the live page is unchanged.
+2. **Approvals:** each pending change shows what changes and a preview of the
+   page as it will publish. **Approve and publish** commits the change to this
+   repository (the change record); **Reject** discards it. Saving a block again
+   replaces its earlier pending change.
+3. **Shared Library** (coordinator): clear flagged events, approve summaries,
+   and edit the quotes, From Tergar items and resource links.
+
+After an approval, the GitHub Action (`.github/workflows/deploy.yml`) builds
+the publish version and deploys it to Cloudflare Pages; it also runs daily.
+
+Private items stay out of this public repository: pending changes (Workers
+KV), the editor list (`USERS` secret), contact addresses (`CONTACTS` secret,
+and the `CONTACTS_YAML` GitHub secret for the build). Commit messages name
+roles ("the group editor"), not email addresses.
+
+Code: `dashboard\src\` (Worker), sharing `lib\render.js` with the site build.
+Local run: `cd dashboard` then `npx wrangler dev` (port 8790; settings in
+`dashboard\.dev.vars`). Deploy: `npx wrangler deploy`.
+
+To add an editor, add their address to the `USERS` secret, e.g.
+`{"george@...": {"role": "coordinator"}, "editor@...": {"groups": ["us/venice-fl"]}}`,
+and add the address to the Cloudflare Access policy.
 
 ## Summaries
 

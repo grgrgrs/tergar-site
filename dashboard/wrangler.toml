@@ -6,6 +6,8 @@
 #   POLICY_AUD  the Access application's Audience (AUD) tag
 #   USERS       JSON: {"email": {"role": "coordinator"} | {"groups": ["us/venice-fl"]}}
 #   CONTACTS    YAML: contacts: { us/venice-fl: address, ... }   (same as data/private/contacts.yaml)
+#   GITHUB_TOKEN  fine-grained token for grgrgrs/tergar-site only, Contents read/write
+#                 (approved changes are committed with it)
 # Local development: put the same names, plus DEV_EMAIL, in dashboard/.dev.vars (gitignored).
 
 name = "tergar-dashboard"
@@ -16,6 +18,16 @@ workers_dev = false
 routes = [
   { pattern = "admin.tergargroups.org", custom_domain = true }
 ]
+
+# Fixed local dev port, so `wrangler dev` doesn't collide with another
+# Worker project on the default 8787.
+[dev]
+port = 8790
+
+# Pending changes (private; never in the public repository)
+[[kv_namespaces]]
+binding = "PENDING"
+id = "c0a0713a1b5e425789c47eb2881e8573"
 
 [vars]
 TEAM_DOMAIN = "fragrant-mud-12dc.cloudflareaccess.com"

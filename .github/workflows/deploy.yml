@@ -1,0 +1,57 @@
+# Build the public group pages and deploy them to Cloudflare Pages.
+# Runs when site data or code changes on main (including changes approved in
+# the dashboard), once a day (so past events drop off), and on demand.
+#
+# Repository secrets (Settings > Secrets and variables > Actions):
+#   CLOUDFLARE_API_TOKEN   token with "Cloudflare Pages: Edit" on the account
+#   CLOUDFLARE_ACCOUNT_ID  the Cloudflare account id
+#   CONTACTS_YAML          contents of data/private/contacts.yaml (role addresses)
+
+name: Build and deploy site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "data/**"
+      - "lib/**"
+      - "scripts/**"
+      - "tools/static/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/deploy.yml"
+  schedule:
+    - cron: "15 9 * * *"   # daily, 9:15 UTC (early morning US Eastern)
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-site
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      HAS_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build (publish mode: reviewed content only)
+        run: node scripts/build.mjs --mode publish
+        env:
+          CONTACTS_YAML: ${{ secrets.CONTACTS_YAML }}
+      - name: Build report
+        run: cat data/build-report-publish.txt
+      - name: Deploy to Cloudflare Pages
+        if: env.HAS_TOKEN == 'true'   # skipped until the secrets are added
+        run: npx --yes wrangler@4.20.0 pages deploy site --project-name tergargroups --branch main --commit-dirty=true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

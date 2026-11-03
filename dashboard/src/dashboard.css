@@ -25,3 +25,44 @@ body.dash{background:var(--bg)}
   border:1px solid var(--title);background:var(--page);color:var(--title);cursor:pointer;z-index:2}
 .ed[disabled]{opacity:.55;cursor:not-allowed}
 .editing .empty{opacity:.75}
+.ed .pend,.pend{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:999px;background:#f3d27a;color:#4a3500;font-size:11px;font-weight:700;text-decoration:none}
+.ed-inline{position:static;margin-left:10px;vertical-align:middle}
+.dash-nav .count{display:inline-block;min-width:18px;padding:0 5px;border-radius:999px;background:#c0392b;color:#fff;font-size:12px;text-align:center}
+.pend-note{margin:8px 0;padding:8px 10px;background:#fff6d8;border:1px solid #f3d27a;border-radius:4px;font-size:14px}
+.ok-note{background:#e8f5e9;border-color:#a5d6a7}
+.dash-list.plain{list-style:none;padding-left:0}
+.pend-item{padding:8px 0;border-bottom:1px solid var(--line)}
+/* Edit forms */
+.edit-form{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-start}
+.edit-form>h2,.edit-form>p,.edit-form>.rows,.edit-form>.dash-table,.edit-form>.btn-add,.edit-form>.form-actions,.edit-form>.f.wide{flex-basis:100%}
+.f{display:flex;flex-direction:column;gap:3px;min-width:200px;flex:1 1 200px}
+.f.wide{flex-basis:100%}
+.f>span{font-size:13px;font-weight:700;color:var(--muted)}
+.f small{color:var(--muted);font-size:12px}
+.f input,.f textarea,.f select,.dash-table input:not([type=checkbox]){font:inherit;font-size:15px;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--text);width:100%;box-sizing:border-box}
+.c{display:flex;gap:8px;align-items:flex-start;font-size:15px;margin:4px 0;cursor:pointer}
+.c.inline{display:inline-flex;margin-right:12px}
+.c input{margin-top:4px}
+.rows{display:flex;flex-direction:column;gap:12px}
+fieldset.row{border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:10px 16px;margin:0}
+fieldset.row legend{font-weight:700;padding:0 6px}
+.btn-add,.btn-primary,.btn-reject{font:700 14px/1 Arial,sans-serif;padding:9px 16px;border-radius:4px;cursor:pointer;display:inline-block;text-decoration:none}
+.btn-add{border:1px dashed var(--title);background:transparent;color:var(--title);align-self:flex-start}
+.btn-primary{border:1px solid var(--title);background:var(--title);color:#fff}
+a.btn-primary:hover{text-decoration:none;opacity:.9}
+.btn-reject{border:1px solid #c0392b;background:transparent;color:#c0392b}
+.form-actions{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:12px}
+form.inline{display:inline}
+.errors li{color:#c0392b;margin-bottom:4px}
+.summary-text{max-width:420px;margin-bottom:4px}
+/* Change preview */
+.diff{border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:8px 10px}
+.diff.same{opacity:.6}
+.diff-h{font-weight:700;font-size:14px;text-transform:capitalize}
+.diff-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.diff pre{white-space:pre-wrap;word-break:break-word;font-size:13px;background:var(--bg);padding:8px;border-radius:4px;margin:2px 0;max-height:320px;overflow:auto}
+@media (max-width:640px){.diff-cols{grid-template-columns:1fr}}
+.f input[type=checkbox],.f input[type=radio],.c input{width:auto;flex:none}
+.dash-table select{font:inherit;font-size:14px;padding:4px 6px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--text)}
+.dash-table .badge{display:inline-block;margin:3px 4px 0 0}
+.dash-table td .c{white-space:nowrap}
