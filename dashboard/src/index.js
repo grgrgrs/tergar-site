@@ -4,13 +4,13 @@
 //   /g/<group>/edit/<block>    edit one block; saving makes a pending change
 //   /approvals                 pending changes for your groups
 //   /approvals/<id>            preview a change; approve or reject
-//   /library                   Shared Library (coordinator only)
+//   /library                   Tergar library (coordinator only)
 //   /library/edit/<block>      review flags and summaries; edit shared lists
 // Approving commits the change to GitHub; a GitHub Action then rebuilds and
 // deploys the public site. Nothing reaches the live site without approval.
 
 import yaml from "js-yaml";
-import { buildGroup, renderGroupBody, todayIn, esc, isoDate } from "../../lib/render.js";
+import { buildGroup, renderGroupBody, todayIn, esc, isoDate, eventLink } from "../../lib/render.js";
 import { identify } from "./auth.js";
 import { loadShared, loadGroup, groupFile, sharedFrom, listPending, getPending, putPending, deletePending, SHARED_EVENTS, LIBRARY } from "./data.js";
 import { applyToObject, applyToYaml, getAt } from "./ops.js";
@@ -58,7 +58,7 @@ function shell(user, active, title, body, pendingCount) {
     <nav class="dash-nav">
       ${nav("/", "home", "Groups")}
       ${nav("/approvals", "approvals", `Approvals${pendingCount ? ` <span class="count">${pendingCount}</span>` : ""}`)}
-      ${user.role === "coordinator" ? nav("/library", "library", "Shared Library") : ""}
+      ${user.role === "coordinator" ? nav("/library", "library", "Tergar library") : ""}
     </nav>
   </div>
 </header>
@@ -76,7 +76,10 @@ function denied(email) {
 }
 
 const canSee = (user, scope) => (scope === "shared" ? user.role === "coordinator" : user.groups.includes(scope));
-const visiblePending = async (env, user) => Object.values(await listPending(env)).filter((c) => canSee(user, c.scope))
+// Approvals lists group changes only; Tergar library changes are published
+// in one step by the coordinator (pass { shared: true } to include them).
+const visiblePending = async (env, user, o = {}) => Object.values(await listPending(env))
+  .filter((c) => canSee(user, c.scope) && (o.shared || c.scope !== "shared"))
   .sort((a, b) => a.created.localeCompare(b.created));
 const changeUrl = (id) => `/approvals/${encodeURIComponent(id)}`;
 
@@ -179,7 +182,7 @@ async function editLibraryBlock(user, env, request, key) {
   if (user.role !== "coordinator") return denied(user.email);
   const block = LIBRARY_BLOCKS[key];
   if (!block) return html(shell(user, "", "Not found", `<div class="dash-card"><p>Unknown section.</p></div>`), 404);
-  const [shared0, pending] = await Promise.all([loadShared(env), visiblePending(env, user)]);
+  const [shared0, pending] = await Promise.all([loadShared(env), visiblePending(env, user, { shared: true })]);
   const id = `shared:${key}`;
   const existing = pending.find((c) => c.id === id);
   const shared = existing ? applyShared(shared0, existing, env) : shared0;
@@ -188,11 +191,11 @@ async function editLibraryBlock(user, env, request, key) {
     let ops;
     try { ops = block.parse(await request.formData(), { ...ctx, shared: shared0 }); }
     catch (e) { if (e instanceof FormError) return errorPage(user, e.list, pending.length); throw e; }
-    await putPending(env, { id, scope: "shared", block: key, label: `Shared Library: ${block.label}`, file: block.file,
+    await putPending(env, { id, scope: "shared", block: key, label: `Tergar library: ${block.label}`, file: block.file,
       ops, author: user.email, authorRole: user.role, created: new Date().toISOString() });
     return redirect(changeUrl(id) + "?saved=1");
   }
-  return html(formPage(user, `Shared Library: ${block.label}`, "", block.render(ctx), `/library/edit/${key}`, "/library", pending.length, existing));
+  return html(formPage(user, `Tergar library: ${block.label}`, "", block.render(ctx), `/library/edit/${key}`, "/library", pending.length, existing));
 }
 
 function applyShared(shared, change, env) {
@@ -249,8 +252,52 @@ function describeOps(before, ops) {
   }).join("");
 }
 
+// Tergar library change: one-step check and publish (coordinator only).
+async function sharedChangeView(user, env, url, change, pending) {
+  const id = change.id;
+  const shared0 = await loadShared(env);
+  const shared = applyShared(shared0, change, env);
+  const isLib = change.file === LIBRARY;
+  const before = isLib ? shared0.library : shared0.sharedDoc, after = isLib ? shared.library : shared.sharedDoc;
+  const lines = describeChange(change, { before, after, sharedBefore: shared0, sharedAfter: shared });
+  // How many group pages show something this change touches (a count, not names).
+  const groups = (await Promise.all(user.groups.map((p) => loadGroup(env, p).catch(() => null)))).filter(Boolean);
+  let touched;
+  if (isLib) {
+    const changed = new Set();
+    for (const k of ["quotes", "from_tergar", "resources"]) {
+      const A = new Map((before[k] || []).map((x) => [x.id, JSON.stringify(x)])), B = new Map((after[k] || []).map((x) => [x.id, JSON.stringify(x)]));
+      for (const idx of new Set([...A.keys(), ...B.keys()])) if (A.get(idx) !== B.get(idx)) changed.add(idx);
+    }
+    touched = groups.filter((g) => changed.has(g.quote) || [...(g.from_tergar || []), ...(g.resources || [])].some((x) => changed.has(x)));
+  } else {
+    const ids = new Set(change.ops.map((o) => (typeof o.path[1] === "object" ? o.path[1].id : null)).filter(Boolean));
+    touched = groups.filter((g) => (g.events || []).some((e) => e.shared && ids.has(e.shared)));
+  }
+  const n = touched.length;
+  const effect = n
+    ? `Publishing updates <strong>${n} group page${n === 1 ? "" : "s"}</strong> (the group${n === 1 ? "" : "s"} showing ${isLib ? "these items" : "these events"}) within a couple of minutes.`
+    : `No group page shows ${isLib ? "these items" : "these events"} yet, so nothing visible changes now. Groups can use ${isLib ? "them" : "them"} straight away.`;
+  return html(shell(user, "library", change.label, `
+  <div class="dash-card review-card">
+    <p class="review-step">${url.searchParams.get("saved") ? "Saved. Not published yet." : "Unfinished change"}</p>
+    <h1>Check, then publish</h1>
+    <p class="small">${esc(change.label)} · ${esc(fmtTime(change.created))}</p>
+    <h2>What this change does</h2>
+    ${changeListHtml(lines)}
+    <p>${effect}</p>
+    <div class="form-actions review-actions">
+      <form method="post" action="${changeUrl(id)}/approve" class="inline"><button type="submit" class="btn-primary btn-big">Save and publish</button></form>
+      <a class="btn-plain" href="/library/edit/${esc(change.block)}">Back to edit</a>
+      <form method="post" action="${changeUrl(id)}/reject" class="inline"><button type="submit" class="btn-reject">Cancel this change</button></form>
+    </div>
+    <details class="tech"><summary>Technical details</summary>${describeOps(before, change.ops)}</details>
+  </div>`, pending.length));
+}
+
 async function changeView(user, env, url, id) {
   const [change, pending] = await Promise.all([getPending(env, id), visiblePending(env, user)]);
+  if (change && change.scope === "shared" && canSee(user, "shared")) return sharedChangeView(user, env, url, change, pending);
   if (!change || !canSee(user, change.scope)) return html(shell(user, "approvals", "Not found", `<div class="dash-card"><p>This change is no longer pending (already approved or rejected).</p><p><a href="/approvals">Back to Approvals</a></p></div>`, pending.length), 404);
   const shared0 = await loadShared(env);
   let groupPath, before, groupData, shared = shared0;
@@ -303,7 +350,7 @@ async function decide(user, env, id, action) {
   if (!change || !canSee(user, change.scope)) return redirect("/approvals");
   if (action === "reject") {
     await deletePending(env, id);
-    return redirect(`/approvals?rejected=${encodeURIComponent(change.label)}`);
+    return redirect(`${change.scope === "shared" ? "/library" : "/approvals"}?rejected=${encodeURIComponent(change.label)}`);
   }
   const message = `${change.label}\n\nProposed by ${roleName(change.authorRole)} and approved by ${roleName(user.role)} in the dashboard (admin.tergargroups.org).`;
   const result = await updateFile(env, change.file, (text) => {
@@ -312,37 +359,42 @@ async function decide(user, env, id, action) {
     return next;
   }, message);
   await deletePending(env, id);
-  return redirect(`/approvals?ok=${encodeURIComponent(change.label)}${result.commitUrl ? `&c=${encodeURIComponent(result.commitUrl)}` : ""}`);
+  return redirect(`${change.scope === "shared" ? "/library" : "/approvals"}?ok=${encodeURIComponent(change.label)}${result.commitUrl ? `&c=${encodeURIComponent(result.commitUrl)}` : ""}`);
 }
 
 // ---------------------------------------------------------------- library
 
-async function libraryView(user, env) {
+async function libraryView(user, env, url) {
   if (user.role !== "coordinator") return denied(user.email);
-  const [shared, pending] = await Promise.all([loadShared(env), visiblePending(env, user)]);
+  const [shared, pending, mineAll] = await Promise.all([loadShared(env), visiblePending(env, user), visiblePending(env, user, { shared: true })]);
   const groupData = await Promise.all(user.groups.map((p) => loadGroup(env, p).catch(() => null)));
   const usedBy = {};
   groupData.filter(Boolean).forEach((g) => (g.events || []).forEach((e) => {
-    if (e.shared) (usedBy[e.shared] = usedBy[e.shared] || []).push(g.name + (e.featured ? " (featured)" : ""));
+    if (e.shared) (usedBy[e.shared] = usedBy[e.shared] || []).push(e.featured);
   }));
   const yes = (b) => (b ? "yes" : "no");
   const rows = shared.sharedEventsList.map((e) => `<tr>
-    <td><a href="${esc(e.source_url || "#")}" target="_blank" rel="noopener">${esc(e.title)}</a></td>
+    <td><a href="${esc(eventLink(e) || "#")}" target="_blank" rel="noopener">${esc(e.title)}</a></td>
     <td>${esc(e.start || e.date_text || "no dates")}${e.end && e.end !== e.start ? " to " + esc(e.end) : ""}</td>
-    <td>${esc(e.restricted)}</td>
+    <td>${e.restricted === "yes" ? "yes" : "no"}</td>
     <td>${e.needs_review ? `<span class="badge warn">${esc(e.needs_review)}</span><div class="small">cleared: ${yes(e.review_cleared)}</div>` : "no"}</td>
     <td>${e.summary ? yes(e.summary_approved) : "none"}</td>
-    <td>${esc((usedBy[e.id] || []).join(", ") || "-")}</td></tr>`).join("");
+    <td>${usedBy[e.id] ? `${usedBy[e.id].length}${usedBy[e.id].some(Boolean) ? ` (${usedBy[e.id].filter(Boolean).length} featured)` : ""}` : "-"}</td></tr>`).join("");
   const series = shared.sharedSeriesList.map((s) => `<li><strong>${esc(s.title)}</strong> · ${esc(s.weekday)} ${esc(s.start_time)} · ${esc(s.format)}${s.has_prerequisites ? " · has prerequisites" : ""}${s.subscription ? " · " + esc(s.subscription) : ""}</li>`).join("");
   const lib = shared.library;
-  const pend = (k) => when(pending.some((c) => c.id === `shared:${k}`), ` <a class="pend" href="${changeUrl(`shared:${k}`)}">change pending</a>`);
-  return shell(user, "library", "Shared Library", `
+  const pend = (k) => when(mineAll.some((c) => c.id === `shared:${k}`), ` <a class="pend" href="${changeUrl(`shared:${k}`)}">unfinished change: check and publish</a>`);
+  const ok = url.searchParams.get("ok"), gone = url.searchParams.get("rejected"), commit = url.searchParams.get("c");
+  return shell(user, "library", "Tergar library", `
+  ${when(ok, `<div class="dash-card ok-note">Published: <strong>${esc(ok)}</strong>. Group pages update within a couple of minutes.
+      ${when(commit && /^https:\/\/github\.com\//.test(commit), ` <a href="${esc(commit)}" target="_blank" rel="noopener">See the change record (GitHub)</a>.`)}</div>`)}
+  ${when(gone, `<div class="dash-card dash-note">Cancelled: <strong>${esc(gone)}</strong>. Nothing changed.</div>`)}
   <div class="dash-card">
-    <h1>Shared Library</h1>
-    <p class="small">Tergar records that groups choose from. Groups can't change these. Events come from the collector (last export ${esc(shared.generated || "?")}).</p>
-    <h2>Shared events</h2>
-    <p><a class="btn-primary" href="/library/edit/review">Review flags and approve summaries</a>${pend("review")}</p>
-    <div class="dash-table"><table><thead><tr><th>Event</th><th>Dates</th><th>Restricted</th><th>Needs review</th><th>Summary approved</th><th>Selected by</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <h1>Tergar library <span class="small">(coordinator only)</span></h1>
+    <p>The Tergar events, quotes and links that all groups choose from. Here you vet them; groups choose what to show on their own page (<strong>Groups</strong> → a group → <strong>Edit</strong> on Program announcements).</p>
+    <p class="small">Group editors can't see or change this page. Changes here publish in one step after you check them. Events come from the collector (last export ${esc(shared.generated || "?")}).</p>
+    <h2>Tergar events</h2>
+    <p><a class="btn-primary" href="/library/edit/review">Review events: flags, summaries, labels and links</a>${pend("review")}</p>
+    <div class="dash-table"><table><thead><tr><th>Event</th><th>Dates</th><th>Has prerequisites</th><th>Needs review</th><th>Summary approved</th><th>Groups showing it</th></tr></thead><tbody>${rows}</tbody></table></div>
     <h2>Quotes, From Tergar, resource links</h2>
     <p><a class="btn-primary" href="/library/edit/lists">Edit these lists</a>${pend("lists")}</p>
     <h3>Quotes</h3><ul class="dash-list">${(lib.quotes || []).map((q) => `<li>“${esc(q.text)}” — ${esc(q.by)}</li>`).join("")}</ul>
@@ -392,7 +444,7 @@ export default {
       if (p === "/approvals") return html(await approvalsView(user, env, url));
       if ((m = p.match(/^\/approvals\/([^/]+)\/(approve|reject)$/)) && request.method === "POST") return await decide(user, env, decodeURIComponent(m[1]), m[2]);
       if ((m = p.match(/^\/approvals\/([^/]+)$/))) return await changeView(user, env, url, decodeURIComponent(m[1]));
-      if (p === "/library") return html(await libraryView(user, env));
+      if (p === "/library") return html(await libraryView(user, env, url));
       if ((m = p.match(/^\/library\/edit\/([a-z_]+)$/))) return await editLibraryBlock(user, env, request, m[1]);
       return html(shell(user, "", "Not found", `<div class="dash-card"><p>Page not found.</p></div>`), 404);
     } catch (err) {

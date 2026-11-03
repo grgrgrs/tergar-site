@@ -128,9 +128,9 @@ Open `site-preview\us\venice-fl\index.html` in a browser to see a page.
   - summaries, until you set `summary_approved: true`
   - contact addresses, until the group's `consent: true`
 
-  Set those flags in the dashboard (Shared Library, and each group's header block), or by hand in `data\shared-events.yaml` and the group file.
+  Set those flags in the dashboard (Tergar library, and each group's header block), or by hand in `data\shared-events.yaml` and the group file.
 - **Pills** under each event or meeting replace requirement text: "Has prerequisites" (shared events: the collector's `restricted: yes`; local items: `has_prerequisites: true`), "JOL"/"VOL" (`subscription:`, set by hand), and a language pill when the event's language differs from the group's (`language:` in the group file, else `default_language` in `data\shared\library.yaml`).
-- **Event link**: one link per event (title, pills, register link). It is `event_url` if set (Shared Library), else the registration page, else the Tergar detail page; never the whole Tergar calendar or a prerequisites PDF.
+- **Event link**: one link per event (title, pills, register link). It is `event_url` if set (Tergar library), else the registration page, else the Tergar detail page; never the whole Tergar calendar or a prerequisites PDF.
 - Each build writes a report to `data\build-report-preview.txt` or `data\build-report-publish.txt`.
 
 ## Dashboard (milestone 2): admin.tergargroups.org
@@ -139,13 +139,17 @@ Editors sign in through Cloudflare Access (an emailed one-time code). Each
 signs in to their own group; the coordinator sees every group.
 
 1. **Groups:** open a group and click **Edit** on any block. Saving creates a
-   *pending change*; the live page is unchanged.
-2. **Approvals:** each pending change shows what changes and a preview of the
-   page as it will publish. **Approve and publish** commits the change to this
-   repository (the change record); **Reject** discards it. Saving a block again
-   replaces its earlier pending change.
-3. **Shared Library** (coordinator): clear flagged events, approve summaries,
-   and edit the quotes, From Tergar items and resource links.
+   *pending change*; the live page is unchanged. Tergar events are chosen
+   here (Edit on Program announcements): any cleared event can be listed;
+   featuring needs an approved summary.
+2. **Approvals:** each pending group change shows what changes and a preview
+   of the page as it will publish. **Publish to the live page** commits the
+   change to this repository (the change record); **Discard** drops it.
+   Saving a block again replaces its earlier pending change.
+3. **Tergar library** (coordinator only; editors never see it): vet Tergar
+   events (clear flags, approve summaries, set labels and links) and edit the
+   quotes, From Tergar items and resource links. Changes here publish in one
+   step: check the summary, then **Save and publish**.
 
 After an approval, the GitHub Action (`.github/workflows/deploy.yml`) builds
 the publish version and deploys it to Cloudflare Pages; it also runs daily.

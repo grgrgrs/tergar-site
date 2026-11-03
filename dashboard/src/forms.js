@@ -1,5 +1,5 @@
 // Edit forms for each block of a group page, and for the coordinator's
-// Shared Library. Each block: { label, render(ctx) -> form HTML,
+// Tergar library. Each block: { label, render(ctx) -> form HTML,
 // parse(fd, ctx) -> ops }. Forms are plain HTML (no client framework); the
 // only script adds rows from a <template>. Parsing validates everything:
 // the dashboard never trusts the browser.
@@ -395,11 +395,12 @@ const events = {
     const chosen = Object.fromEntries((g.events || []).filter((e) => e.shared).map((e) => [e.shared, e]));
     const list = shared.sharedEventsList.filter((e) => chosen[e.id] || !e.last_date || String(e.last_date) >= today)
       .sort((a, b) => String(a.sort_date || "9999").localeCompare(String(b.sort_date || "9999")));
-    const rowsHtml = list.map((e) => {
+    const held = (e) => e.needs_review && !e.review_cleared;
+    const ready = (e) => !!(e.summary && e.summary_approved);
+    const row = (e) => {
       const c = chosen[e.id] || {};
       const flags = [
-        e.needs_review && !e.review_cleared ? `<span class="badge warn">held for review: ${esc(e.needs_review)}</span>` : "",
-        e.summary && !e.summary_approved ? `<span class="badge">summary awaiting approval</span>` : "",
+        held(e) ? `<span class="badge warn">held for review: ${esc(e.needs_review)}</span>` : "",
         e.restricted === "yes" ? `<span class="badge">has prerequisites</span>` : "",
         e.subscription ? `<span class="badge">${esc(e.subscription)}</span>` : "",
         e.last_date && String(e.last_date) < today ? `<span class="badge">past</span>` : "",
@@ -407,15 +408,22 @@ const events = {
       return `<tr><td><a href="${esc(eventLink(e) || "#")}" target="_blank" rel="noopener">${esc(e.title)}</a>
           <div class="small">${esc(e.start ? `${e.start}${e.end && e.end !== e.start ? " to " + e.end : ""}` : e.date_text || "no dates")}${e.format ? " · " + esc(e.format) : ""}</div><div>${flags}</div></td>
         <td>${check(`ev-${esc(e.id)}-show`, "Show", !!chosen[e.id])}</td>
-        <td>${check(`ev-${esc(e.id)}-featured`, "Featured", !!c.featured)}</td>
+        <td>${ready(e) ? check(`ev-${esc(e.id)}-featured`, "Featured", !!c.featured) : `<span class="small">Featured needs an approved summary</span>`}</td>
         <td><input name="ev-${esc(e.id)}-note" value="${v(c.note)}" maxlength="300" placeholder="Local note (optional)"></td></tr>`;
-    }).join("");
+    };
+    const group = (title, hint, items) => items.length ? `<h3 class="ev-group">${title} <span class="small">(${items.length})</span></h3><p class="small">${hint}</p>
+      <div class="dash-table"><table><thead><tr><th>Event</th><th></th><th></th><th>Local note</th></tr></thead><tbody>${items.map(row).join("")}</tbody></table></div>` : "";
+    const rowsHtml = [
+      group("Ready", "Can be listed and featured.", list.filter((e) => !held(e) && ready(e))),
+      group("Listed only, for now", "Can be listed under Program announcements. Featuring opens once the coordinator approves the summary.", list.filter((e) => !held(e) && !ready(e))),
+      group("Held for review", "Won't appear on the live page until the coordinator clears it. You can tick Show now so it appears once cleared.", list.filter(held)),
+    ].join("");
     const sel = Object.fromEntries((g.events || []).filter((e) => e.local).map((e) => [e.local, e]));
     const locals = (g.local_events || []).map((e) => Object.assign({}, e, { _shown: !!sel[e.id], _featured: !!(sel[e.id] || {}).featured, _note: (sel[e.id] || {}).note }));
     return `
-    <h2>Tergar events</h2>
-    <p class="small">Tick <strong>Show</strong> to list an event under Program announcements, and <strong>Featured</strong> to also give it a full block (up to ${MAX_FEATURED}). Featured blocks are placed by date, into whichever column is shorter. Events held for review or with a summary awaiting approval can be chosen; the live page holds those parts back until the coordinator clears them.</p>
-    <div class="dash-table"><table><thead><tr><th>Event</th><th></th><th></th><th>Local note</th></tr></thead><tbody>${rowsHtml}</tbody></table></div>
+    <h2>Choose Tergar events for this page</h2>
+    <p class="small">These are the Tergar events available to all groups. Tick <strong>Show</strong> to list an event under Program announcements, and <strong>Featured</strong> to also give it a full block (up to ${MAX_FEATURED}). Featured blocks are placed by date, into whichever column is shorter.</p>
+    ${rowsHtml}
     <h2>Your local events</h2>
     <p class="small">Events your group runs or recommends that are not in Tergar's listings.</p>
     ${rowList("le", locals, localEventRow, "Add a local event")}`;
@@ -427,6 +435,7 @@ const events = {
     for (const e of shared.sharedEventsList) {
       const show = on(fd, `ev-${e.id}-show`), feat = on(fd, `ev-${e.id}-featured`);
       if (!show && !feat) continue;
+      if (feat && !(e.summary && e.summary_approved)) { errs.push(`"${e.title}" can't be featured until its summary is approved; it can be listed`); continue; }
       if (feat) featured++;
       selections.push(sel("shared", e.id, feat, text(fd, `ev-${e.id}-note`, 300)));
     }
