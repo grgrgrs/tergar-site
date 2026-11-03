@@ -88,3 +88,6 @@ form.inline{display:inline}
 .btn-plain{font:700 14px/1 Arial,sans-serif;padding:9px 16px;border:1px solid var(--line);border-radius:4px;text-decoration:none;color:inherit}
 details.tech{margin-top:14px;font-size:13px;color:#555}
 details.tech summary{cursor:pointer}
+.remind-note{background:#fff4d6;border-color:#f0d58a}
+.remind-note .btn-primary{margin:8px 0 4px}
+a.remind{color:#8a5a00;font-weight:700}

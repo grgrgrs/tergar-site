@@ -80,13 +80,27 @@ const visiblePending = async (env, user) => Object.values(await listPending(env)
   .sort((a, b) => a.created.localeCompare(b.created));
 const changeUrl = (id) => `/approvals/${encodeURIComponent(id)}`;
 
+// A Next meeting whose date has passed (hidden on the live page) and no
+// replacement waiting. Groups that don't use the block never see this.
+function staleMeeting(group, pending, path) {
+  const nm = group && group.next_meeting;
+  const d = nm ? isoDate(nm.date) : null;
+  if (!d || d >= todayIn(group.time_zone)) return null;
+  if (pending.some((c) => c.scope === path && c.block === "next_meeting")) return null;
+  return d;
+}
+
+const fmtDayShort = (d) => new Date(d + "T12:00:00Z").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
+
 // ------------------------------------------------------------------ views
 
 async function home(user, env) {
   const pending = await visiblePending(env, user);
   const count = (p) => pending.filter((c) => c.scope === p).length;
-  const groups = user.groups.map((p) => `<li><a href="/g/${esc(p)}"><strong>${esc(p)}</strong></a>
+  const data = await Promise.all(user.groups.map((p) => loadGroup(env, p).catch(() => null)));
+  const groups = user.groups.map((p, i) => `<li><a href="/g/${esc(p)}"><strong>${esc(p)}</strong></a>
     ${when(count(p), ` · <a href="/approvals">${count(p)} change${count(p) === 1 ? "" : "s"} waiting</a>`)}
+    ${when(staleMeeting(data[i], pending, p), ` · <a class="remind" href="/g/${esc(p)}/edit/next_meeting">Next meeting needs updating</a>`)}
     · <a href="https://tergargroups.org/${esc(p)}/" target="_blank" rel="noopener">live page</a></li>`).join("");
   return shell(user, "home", "Groups", `
   <div class="dash-card">
@@ -104,6 +118,9 @@ async function groupView(user, env, path) {
   const body = renderGroupBody(page, { assets: ASSET_BASE, editable: true, built: today, pending: mine.map((c) => c.block) });
   const issues = page.issues.length ? `<details class="dash-issues"><summary>${page.issues.length} item${page.issues.length === 1 ? "" : "s"} to review on this page</summary><ul>${page.issues.map((i) => `<li>${esc(i)}</li>`).join("")}</ul></details>` : "";
   return shell(user, "home", group.name, `
+  ${when(staleMeeting(group, pending, path), `<div class="dash-card remind-note"><strong>Your next meeting date (${esc(fmtDayShort(staleMeeting(group, pending, path)))}) has passed</strong>, so the Next meeting block is hidden on the live page.
+    <a class="btn-primary" href="/g/${esc(path)}/edit/next_meeting">Add the next meeting</a>
+    <div class="small">If your group doesn't post a topic each week, open the form and tick "No next meeting block" to stop this reminder.</div></div>`)}
   <div class="dash-card dash-note">
     <strong>${esc(group.name)}</strong>: this is the page as it is now (draft summaries and flagged events included and marked). Click <strong>Edit</strong> on any block.
     ${when(mine.length, `<div class="pend-note">${mine.length} change${mine.length === 1 ? "" : "s"} waiting for approval: ${mine.map((c) => `<a href="${changeUrl(c.id)}">${esc(c.label)}</a>`).join(", ")}</div>`)}
