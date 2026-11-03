@@ -9,6 +9,7 @@
 // the contacts come from the CONTACTS_YAML secret instead.
 
 import fs from "node:fs";
+import crypto from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import yaml from "js-yaml";
@@ -41,6 +42,10 @@ fs.rmSync(outDir, { recursive: true, force: true });
 fs.mkdirSync(path.join(outDir, "assets"), { recursive: true });
 for (const f of fs.readdirSync(ASSETS)) fs.copyFileSync(path.join(ASSETS, f), path.join(outDir, "assets", f));
 
+// A new address for site.css / site.js whenever they change, so browsers
+// don't keep showing an old cached copy.
+const version = crypto.createHash("sha1").update(["site.css", "site.js"].map((f) => fs.readFileSync(path.join(ASSETS, f))).join("")).digest("hex").slice(0, 10);
+
 const report = [`Build report (${mode}) for ${args.today || "today"}`, ""];
 const groups = [];
 for (const f of fs.readdirSync(path.join(DATA, "groups")).filter((x) => x.endsWith(".yaml")).sort()) {
@@ -52,10 +57,10 @@ for (const f of fs.readdirSync(path.join(DATA, "groups")).filter((x) => x.endsWi
   const depth = "../".repeat(group.path.split("/").length);
   const target = path.join(outDir, ...group.path.split("/"), "index.html");
   fs.mkdirSync(path.dirname(target), { recursive: true });
-  fs.writeFileSync(target, renderGroupPage(page, { assets: depth + "assets", built, editable: false }));
+  fs.writeFileSync(target, renderGroupPage(page, { assets: depth + "assets", built, editable: false, version }));
   groups.push({ name: group.name, full_name: group.full_name, path: group.path, location: group.location });
 }
-fs.writeFileSync(path.join(outDir, "index.html"), renderIndex(groups, { assets: "assets", preview: mode === "preview" }));
+fs.writeFileSync(path.join(outDir, "index.html"), renderIndex(groups, { assets: "assets", preview: mode === "preview", version }));
 
 if (!args.out) fs.writeFileSync(path.join(DATA, `build-report-${mode}.txt`), report.join("\n") + "\n");
 console.log(report.join("\n"));

@@ -51,7 +51,16 @@ DECISIONS SINCE THE HANDOFF (these take precedence)
   (events.tergar.org/) and never a prerequisites PDF. Per-event "from
   Tergar" attribution is removed.
 - Look: top banner tools/static/mountains-giantmoon-dusk-banner.jpg; all
-  section headers use the light lavender band.
+  section headers use the light lavender band. One body text size
+  (14.5px). One "Featured" heading before the first featured block (no
+  per-block "Featured" label or Edit button). The intro text has no
+  background. "Times are shown in the group's local time, then UTC"
+  appears once, in the footer.
+- Dates: never abbreviate the day of the week or the month ("Monday,
+  November 9", not "Mon, Nov 9"), on the site and in the dashboard.
+- Links to other sites open in a new tab.
+- Dashboard: group editors never see technical items (GitHub links, raw
+  data). The change-record link is shown to the coordinator only.
 - Review gate: George reviews summaries before they publish (approval flow,
   milestone 2). Until then, nothing is deployed without his review. Rows
   with Needs review = Yes are not published until someone has cleared them.

@@ -53,6 +53,11 @@
   var anchorL = document.querySelector('.feat-anchor[data-side="L"]');
   var anchorR = document.querySelector('.feat-anchor[data-side="R"]');
   var fl = L && L.querySelector(".filler"), fr = R && R.querySelector(".filler");
+  // The one "Featured" heading goes right before the first featured block.
+  var head = document.querySelector(".feat-head");
+  if (head && !feats.length) head.remove();
+  function placeHead() { if (head && feats.length) feats[0].parentNode.insertBefore(head, feats[0]); }
+  placeHead();
 
   function twoColumns() { return fl && getComputedStyle(fl).display !== "none"; }
   function h(el) { return el.getBoundingClientRect().height; }
@@ -63,9 +68,11 @@
     if (!L || !R || !anchorL || !anchorR) return;
     fl.style.height = "0px"; fr.style.height = "0px";
     if (!twoColumns()) return;  // phone: one column, order set above
+    if (head && head.parentNode) head.parentNode.removeChild(head);
     feats.forEach(function (f) { f.parentNode.removeChild(f); });
-    feats.forEach(function (f) {
+    feats.forEach(function (f, i) {
       var anchor = h(L) <= h(R) ? anchorL : anchorR;
+      if (i === 0 && head) anchor.parentNode.insertBefore(head, anchor);
       anchor.parentNode.insertBefore(f, anchor);
     });
     var hl = h(L), hr = h(R), gap = Math.round(Math.abs(hl - hr));

@@ -25,7 +25,7 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);
-  font:16px/1.55 Arial,"Helvetica Neue",Helvetica,system-ui,sans-serif}
+  font:14.5px/1.55 Arial,"Helvetica Neue",Helvetica,system-ui,sans-serif} /* one body text size */
 a{color:var(--link);font-weight:700;text-decoration:none}
 a:hover,a:focus{text-decoration:underline}
 p{margin:6px 0}
@@ -42,10 +42,10 @@ h1,h2,h3{margin:0}
 .hdr h1{font-size:34px;font-weight:700;letter-spacing:.2px;text-shadow:0 1px 3px rgba(0,0,0,.5)}
 .hdr-sub{margin-top:4px;font-size:17px;opacity:.95;text-shadow:0 1px 2px rgba(0,0,0,.5)}
 
-.intro{background:var(--cream);padding:12px 16px;border-radius:4px;border-bottom:none;font-size:15px}
-.quote{text-align:center;padding:10px 16px 14px}
+.intro{padding:0 0 4px;border-bottom:none}
+.quote{text-align:center;padding:0 16px 8px;margin-bottom:10px}
 .quote blockquote{margin:0;font-size:19px}
-.quote .by{margin-top:6px;font-weight:700}
+.quote .by{margin-top:2px;font-weight:700}
 
 /* Section bands, as in the newsletters */
 .band{font-size:21px;font-weight:400;padding:8px 14px;margin:0 -16px 10px;color:var(--text)}
@@ -60,7 +60,7 @@ h3{font-size:17px;font-weight:700;margin-top:4px}
 .title-blue a{color:inherit}
 .sub-h{color:var(--title);font-weight:700;margin-top:8px}
 .with{font-weight:700;margin-bottom:2px}
-.meta{color:var(--muted);font-size:14.5px}
+.meta{color:var(--muted)}
 .small{font-size:13px;color:var(--muted)}
 .item{padding:8px 0;border-bottom:1px solid var(--line)}
 .item:last-of-type{border-bottom:none}
@@ -69,10 +69,9 @@ h3{font-size:17px;font-weight:700;margin-top:4px}
 .col{display:flex;flex-direction:column;min-width:0}
 .col>.blk{padding-left:0;padding-right:0}
 
-.kicker{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
-  background:var(--sky);display:inline-block;padding:2px 8px;border-radius:3px;margin-top:4px}
+.feat-head{border-bottom:none;padding-bottom:0;margin-bottom:4px}
 .feat .summary{margin:8px 0}
-.localnote{background:var(--cream);padding:8px 10px;margin:8px 0;border-radius:4px;font-size:14.5px}
+.localnote{background:var(--cream);padding:8px 10px;margin:8px 0;border-radius:4px}
 .contemplation{border:2px solid var(--muted);padding:8px 12px;margin-top:10px}
 .cta{display:inline-block;margin-top:6px}
 

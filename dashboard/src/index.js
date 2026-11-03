@@ -41,7 +41,7 @@ const sameData = (a, b) => {
 };
 const roleName = (role) => (role === "coordinator" ? "the coordinator" : "the group editor");
 const when = (c, s) => (c ? s : "");
-const fmtTime = (iso) => new Date(iso).toLocaleString("en-US", { timeZone: "America/New_York", dateStyle: "medium", timeStyle: "short" }) + " ET";
+const fmtTime = (iso) => new Date(iso).toLocaleString("en-US", { timeZone: "America/New_York", dateStyle: "long", timeStyle: "short" }) + " ET";
 
 function shell(user, active, title, body, pendingCount) {
   const nav = (href, key, label) => `<a href="${href}"${active === key ? ' class="on"' : ""}>${label}</a>`;
@@ -93,7 +93,7 @@ function staleMeeting(group, pending, path) {
   return d;
 }
 
-const fmtDayShort = (d) => new Date(d + "T12:00:00Z").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
+const fmtDayShort = (d) => new Date(d + "T12:00:00Z").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" });
 
 // ------------------------------------------------------------------ views
 
@@ -214,7 +214,7 @@ async function approvalsView(user, env, url) {
       <div class="small">Proposed by ${esc(c.author)} · ${esc(fmtTime(c.created))}</div></li>`).join("");
   return shell(user, "approvals", "Approvals", `
   ${when(ok, `<div class="dash-card ok-note">Published: <strong>${esc(ok)}</strong>. The live page updates within a couple of minutes.
-      ${when(commit && /^https:\/\/github\.com\//.test(commit), ` <a href="${esc(commit)}" target="_blank" rel="noopener">See the change record (GitHub)</a>.`)}</div>`)}
+      ${when(user.role === "coordinator" && commit && /^https:\/\/github\.com\//.test(commit), ` <a href="${esc(commit)}" target="_blank" rel="noopener">See the change record (GitHub)</a>.`)}</div>`)}
   ${when(gone, `<div class="dash-card dash-note">Discarded: <strong>${esc(gone)}</strong>.</div>`)}
   <div class="dash-card">
     <h1>Approvals</h1>
@@ -386,7 +386,7 @@ async function libraryView(user, env, url) {
   const ok = url.searchParams.get("ok"), gone = url.searchParams.get("rejected"), commit = url.searchParams.get("c");
   return shell(user, "library", "Tergar library", `
   ${when(ok, `<div class="dash-card ok-note">Published: <strong>${esc(ok)}</strong>. Group pages update within a couple of minutes.
-      ${when(commit && /^https:\/\/github\.com\//.test(commit), ` <a href="${esc(commit)}" target="_blank" rel="noopener">See the change record (GitHub)</a>.`)}</div>`)}
+      ${when(user.role === "coordinator" && commit && /^https:\/\/github\.com\//.test(commit), ` <a href="${esc(commit)}" target="_blank" rel="noopener">See the change record (GitHub)</a>.`)}</div>`)}
   ${when(gone, `<div class="dash-card dash-note">Cancelled: <strong>${esc(gone)}</strong>. Nothing changed.</div>`)}
   <div class="dash-card">
     <h1>Tergar library <span class="small">(coordinator only)</span></h1>

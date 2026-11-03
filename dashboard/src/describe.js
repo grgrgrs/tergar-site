@@ -20,7 +20,7 @@ const WORDS = {
   on_request: "On request", shown: "Shown on the page",
 };
 const SKIP = new Set(["id", "time_zone", "featured", "requires"]);
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 const blank = (v) => v === undefined || v === null || v === "" || (Array.isArray(v) && !v.length);
 function niceDate(v) {
