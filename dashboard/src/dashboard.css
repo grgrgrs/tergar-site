@@ -66,3 +66,25 @@ form.inline{display:inline}
 .dash-table select{font:inherit;font-size:14px;padding:4px 6px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--text)}
 .dash-table .badge{display:inline-block;margin:3px 4px 0 0}
 .dash-table td .c{white-space:nowrap}
+/* review page */
+.review-step{margin:0 0 4px;font:700 13px/1.3 Arial,sans-serif;color:#2e7d32;text-transform:uppercase;letter-spacing:.04em}
+.review-card h2{margin-top:18px}
+.chg{list-style:none;padding:0;margin:8px 0 14px}
+.chg li{display:flex;gap:10px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--line);font-size:16px;line-height:1.45}
+.chg li:last-child{border-bottom:0}
+.chg-tag{flex:0 0 auto;min-width:84px;text-align:center;font:700 12px/1 Arial,sans-serif;padding:5px 8px;border-radius:12px;background:#eef1f4;color:#37474f}
+.chg-added .chg-tag{background:#e3f2e5;color:#1b5e20}
+.chg-removed .chg-tag{background:#fdecea;color:#b03a2e}
+.chg-featured .chg-tag{background:#fff4d6;color:#7a5800}
+.chg-text{flex:1;min-width:0}
+.chg-old{text-decoration:line-through;color:#777}
+.chg-new{font-weight:700}
+.chg-ba{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.chg-ba div{background:var(--bg);padding:8px;border-radius:4px;font-size:14px}
+.chg-ba span{display:block;font:700 11px/1.4 Arial,sans-serif;text-transform:uppercase;color:#777}
+@media (max-width:640px){.chg-ba{grid-template-columns:1fr}.chg li{flex-direction:column;gap:4px}}
+.review-actions{align-items:center;gap:12px;flex-wrap:wrap}
+.btn-big{font-size:16px;padding:12px 22px}
+.btn-plain{font:700 14px/1 Arial,sans-serif;padding:9px 16px;border:1px solid var(--line);border-radius:4px;text-decoration:none;color:inherit}
+details.tech{margin-top:14px;font-size:13px;color:#555}
+details.tech summary{cursor:pointer}

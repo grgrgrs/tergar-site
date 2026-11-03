@@ -16,6 +16,7 @@ import { loadShared, loadGroup, groupFile, sharedFrom, listPending, getPending, 
 import { applyToObject, applyToYaml, getAt } from "./ops.js";
 import { updateFile } from "./github.js";
 import { GROUP_BLOCKS, LIBRARY_BLOCKS, FormError } from "./forms.js";
+import { describeChange, changeListHtml } from "./describe.js";
 import siteCss from "../../tools/static/site.css";
 import siteJs from "../../tools/static/site.js";
 import dashCss from "./dashboard.css";
@@ -192,13 +193,13 @@ async function approvalsView(user, env, url) {
       <a href="${changeUrl(c.id)}"><strong>${esc(c.label)}</strong></a>
       <div class="small">Proposed by ${esc(c.author)} · ${esc(fmtTime(c.created))}</div></li>`).join("");
   return shell(user, "approvals", "Approvals", `
-  ${when(ok, `<div class="dash-card ok-note">Approved and published: <strong>${esc(ok)}</strong>. The live site updates in a minute or two.
-      ${when(commit && /^https:\/\/github\.com\//.test(commit), ` <a href="${esc(commit)}" target="_blank" rel="noopener">See the change record</a>.`)}</div>`)}
-  ${when(gone, `<div class="dash-card dash-note">Rejected and discarded: <strong>${esc(gone)}</strong>.</div>`)}
+  ${when(ok, `<div class="dash-card ok-note">Published: <strong>${esc(ok)}</strong>. The live page updates within a couple of minutes.
+      ${when(commit && /^https:\/\/github\.com\//.test(commit), ` <a href="${esc(commit)}" target="_blank" rel="noopener">See the change record (GitHub)</a>.`)}</div>`)}
+  ${when(gone, `<div class="dash-card dash-note">Discarded: <strong>${esc(gone)}</strong>.</div>`)}
   <div class="dash-card">
     <h1>Approvals</h1>
-    ${items ? `<ul class="dash-list plain">${items}</ul>` : "<p>No pending changes.</p>"}
-    <p class="small">Open a change to see what it will publish, then approve or reject it. Approving records the change in the site's history (GitHub) and updates the live page.</p>
+    ${items ? `<ul class="dash-list plain">${items}</ul>` : "<p>Nothing waiting. Every saved change has been published or discarded.</p>"}
+    <p class="small">Changes listed here are saved but not live yet. Open one to check it, then publish or discard it.</p>
   </div>`, pending.length);
 }
 
@@ -254,20 +255,27 @@ async function changeView(user, env, url, id) {
   const groupSwitch = change.scope === "shared" && user.groups.length > 1
     ? `<p class="small">Preview with: ${user.groups.map((p) => p === groupPath ? `<strong>${esc(p)}</strong>` : `<a href="${changeUrl(id)}?g=${encodeURIComponent(p)}">${esc(p)}</a>`).join(" · ")}</p>` : "";
   const editLink = change.scope === "shared" ? `/library/edit/${change.block}` : `/g/${change.scope}/edit/${change.block}`;
+  const after = change.scope === "shared" ? (change.file === LIBRARY ? shared.library : shared.sharedDoc) : groupData;
+  const lines = describeChange(change, { before, after, sharedBefore: shared0, sharedAfter: shared, groupAfter: groupData });
+  const saved = url.searchParams.get("saved");
+  const who = change.author === user.email ? "you" : change.author;
   return html(shell(user, "approvals", change.label, `
-  ${when(url.searchParams.get("saved"), `<div class="dash-card ok-note">Saved as a pending change. Nothing on the live page has changed yet. Review the preview below, then approve or reject.</div>`)}
-  <div class="dash-card">
-    <h1>${esc(change.label)}</h1>
-    <p class="small">Proposed by ${esc(change.author)} · ${esc(fmtTime(change.created))}</p>
-    <h2>What changes</h2>
-    ${describeOps(before, change.ops)}
-    <div class="form-actions">
-      <form method="post" action="${changeUrl(id)}/approve" class="inline"><button type="submit" class="btn-primary">Approve and publish</button></form>
-      <form method="post" action="${changeUrl(id)}/reject" class="inline"><button type="submit" class="btn-reject">Reject</button></form>
-      <a href="${esc(editLink)}">Edit this change</a>
+  <div class="dash-card review-card">
+    ${saved
+      ? `<p class="review-step">Saved. <strong>Not on the live page yet.</strong></p><h1>Check your change, then publish it</h1>`
+      : `<p class="review-step">Waiting for approval</p><h1>${esc(change.label)}</h1>`}
+    <p class="small">${saved ? esc(change.label) + " · " : ""}Saved by ${esc(who)} · ${esc(fmtTime(change.created))}</p>
+    <h2>What this change does</h2>
+    ${changeListHtml(lines)}
+    <div class="form-actions review-actions">
+      <form method="post" action="${changeUrl(id)}/approve" class="inline"><button type="submit" class="btn-primary btn-big">Publish to the live page</button></form>
+      <a class="btn-plain" href="${esc(editLink)}">Make more edits</a>
+      <form method="post" action="${changeUrl(id)}/reject" class="inline"><button type="submit" class="btn-reject">Discard this change</button></form>
     </div>
+    <p class="small">Publishing updates the live page within a couple of minutes. Discarding throws this change away; the live page stays as it is.</p>
+    ${when(user.role === "coordinator", `<details class="tech"><summary>Technical details</summary>${describeOps(before, change.ops)}</details>`)}
   </div>
-  <div class="dash-card dash-note"><strong>Preview: ${esc(groupData.name)} as it will publish</strong> (reviewed content only, as on the live site).
+  <div class="dash-card dash-note"><strong>Preview: how ${esc(groupData.name)} will look after publishing</strong>
     ${groupSwitch}${held}</div>
   <div data-zone="${esc(groupData.time_zone)}" id="page-wrap">${body}</div>
   <script src="/assets/site.js"></script>`, pending.length));
