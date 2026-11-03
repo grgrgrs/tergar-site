@@ -229,8 +229,8 @@ events:
     is restricted to those who have completed Joy of Living 1 and 2 and all assigned homework.'
   needs_review: Site's host text repeats the teacher names ('Tergar Mingjue 德噶明覺Tzunma Miao Rong, Tzunma
     Drolkar'); trimmed to host name
-  review_cleared: false
-  summary_approved: false
+  review_cleared: true
+  summary_approved: true
   collector_source: calendar
   date_fetched: '2026-11-02'
 - id: finding-freedom-in-lifes-transitions-teachings-on-the-six-ba-2026-12-04
