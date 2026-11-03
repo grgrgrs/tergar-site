@@ -10,7 +10,7 @@
 // deploys the public site. Nothing reaches the live site without approval.
 
 import yaml from "js-yaml";
-import { buildGroup, renderGroupBody, todayIn, esc } from "../../lib/render.js";
+import { buildGroup, renderGroupBody, todayIn, esc, isoDate } from "../../lib/render.js";
 import { identify } from "./auth.js";
 import { loadShared, loadGroup, groupFile, sharedFrom, listPending, getPending, putPending, deletePending, SHARED_EVENTS, LIBRARY } from "./data.js";
 import { applyToObject, applyToYaml, getAt } from "./ops.js";
@@ -205,6 +205,18 @@ async function approvalsView(user, env, url) {
 function describeOps(before, ops) {
   const label = (path) => path.map((p) => (typeof p === "object" ? p.id : p)).join(" › ").replace(/_/g, " ");
   const dump = (x) => (x === undefined || x === null || x === "" ? "(empty)" : typeof x === "string" ? x : yaml.dump(x, { lineWidth: 100 }).trim());
+  // Show values as they read, not as they are typed: dates as YYYY-MM-DD,
+  // and no "featured: false" (the default), so only real changes differ.
+  const norm = (x) => {
+    if (x instanceof Date) return isoDate(x);
+    if (Array.isArray(x)) return x.map(norm);
+    if (x && typeof x === "object") {
+      const o = {};
+      for (const [k, v] of Object.entries(x)) if (!(k === "featured" && v === false)) o[k] = norm(v);
+      return o;
+    }
+    return x;
+  };
   return ops.map((op) => {
     let was = getAt(before, op.path), now = op.value;
     if (op.listReplace) {
@@ -212,6 +224,7 @@ function describeOps(before, ops) {
       was = (was || []).filter(pick);
       now = op.items;
     }
+    was = norm(was); now = norm(now);
     const same = JSON.stringify(was ?? null) === JSON.stringify(now ?? null);
     return `<div class="diff${same ? " same" : ""}"><div class="diff-h">${esc(label(op.path))}${same ? " (unchanged)" : ""}</div>
       ${same ? "" : `<div class="diff-cols"><div><div class="small">Now</div><pre>${esc(dump(was))}</pre></div><div><div class="small">After approval</div><pre>${esc(dump(now))}</pre></div></div>`}</div>`;
