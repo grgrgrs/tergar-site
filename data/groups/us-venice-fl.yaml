@@ -88,13 +88,9 @@ events:
   - local: wild-world-steady-mind
     featured: true
   - shared: finding-freedom-in-lifes-transitions-teachings-on-the-six-ba-2026-12-04
-    featured: true          # demo selection
-  - shared: anytime-anywhere-meditation-aam-5-week-online-workshop-2027-01-19
-    featured: true          # demo selection
+    featured: true
   - shared: the-primordial-secret-dzogchen-instructions-on-trekcho-medit-2026-12-11
-    featured: false         # demo selection (shows the Requires line)
   - shared: year-end-retreat-dzogchen-trekcho-teachings-2026-12-30
-    featured: false         # demo selection (flagged for review in the collector)
 
 local_events:
   - id: wild-world-steady-mind
