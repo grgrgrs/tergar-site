@@ -22,18 +22,36 @@ Milestones and open decisions are in the handoff brief.
 DECISIONS SINCE THE HANDOFF (these take precedence)
 - Branding: no Tergar logo or branding for now. If that changes later,
   logos only as provided and approved by Tergar.
-- Requires label: show the FULL prerequisite text from the source, not a
-  shortened version. Never show a restricted event as "Open to everyone".
-- Unknown access: where the collector has Restricted = "Not listed", show
-  "Access not stated, check the event page"; never default to open.
+- Pills replace requirement text (decided 2026-11-03; replaces the earlier
+  "show the FULL prerequisite text" rule). Event cards, program
+  announcements and meeting series show no prerequisite or requirement
+  text, only a compact row of pills, each shown only when it applies:
+  "Has prerequisites" (amber tint; links to the event link), "JOL" / "VOL"
+  (subscription; plain label), and a language pill. Flags come from
+  curated data only, never inferred from text: shared events use the
+  collector's Restricted = yes; subscription is set by hand in the
+  Shared Library; local events and meetings use the editor's checkbox and
+  subscription choice. Open events show nothing ("Open to everyone" is no
+  longer shown). Unknown access (Restricted not yes/no) shows nothing.
+  A restricted event is never shown as open.
+- Languages: each group has a language (group file "language:", else
+  default_language in data/shared/library.yaml). An event with no
+  language listed is assumed to be in default_language. No pill when the
+  event is in the group's language; one other language shows its name;
+  several languages or interpretation show "Multiple languages" (links to
+  the event link). Titles in other languages are shown as published; the
+  site's own text stays English.
 - Descriptions: never publish the collector's Description column (text
   copied from Tergar, Eventbrite and local center pages). Publish our
-  summary plus the source link instead.
-- Attribution link: link each event to its Tergar source page (the first
-  URL in Source URL). Use "More information" as the registration link.
-- Languages: events whose titles or prerequisite text are in other
-  languages (French, Chinese, ...) are shown as published. The site's own
-  text stays English.
+  summary plus the event link instead.
+- Event link (replaces "Attribution link"): one link per event, used by the
+  title, the pills and "More information and registration": a hand-set
+  event_url, else the registration page, else the Tergar detail page,
+  else the page it was found on. Never the whole Tergar calendar
+  (events.tergar.org/) and never a prerequisites PDF. Per-event "from
+  Tergar" attribution is removed.
+- Look: top banner tools/static/mountains-giantmoon-dusk-banner.jpg; all
+  section headers use the light lavender band.
 - Review gate: George reviews summaries before they publish (approval flow,
   milestone 2). Until then, nothing is deployed without his review. Rows
   with Needs review = Yes are not published until someone has cleared them.

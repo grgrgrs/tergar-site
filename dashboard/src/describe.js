@@ -12,13 +12,14 @@ const FIELD = {
   anchor_date: "A date it meets", zoom_access: "Zoom link", zoom_url: "Zoom address", notes: "Notes",
   start_date: "Starts", end_date: "Ends", cadence_text: "When", date: "Date",
   reading: "Reading", contemplation: "Contemplation", text: "Text", by: "By", note: "Local note",
+  has_prerequisites: "Has prerequisites", subscription: "Subscription", event_url: "Event link",
 };
 const WORDS = {
   weekly: "Every week", every_other_week: "Every other week", monthly_weeks: "Certain weeks of the month",
   in_person: "In person", zoom: "Zoom", both: "In person and Zoom",
   on_request: "On request", shown: "Shown on the page",
 };
-const SKIP = new Set(["id", "time_zone", "featured"]);
+const SKIP = new Set(["id", "time_zone", "featured", "requires"]);
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const blank = (v) => v === undefined || v === null || v === "" || (Array.isArray(v) && !v.length);
@@ -116,6 +117,8 @@ export function describeChange(change, { before, after, sharedBefore, sharedAfte
         const t = q(titles[op.path[1].id] || op.path[1].id);
         if (op.path[2] === "review_cleared") out.push(op.value ? line("added", "Cleared", `${t} cleared for publishing`) : line("removed", "Held", `${t} held back for review again`));
         if (op.path[2] === "summary_approved") out.push(op.value ? line("added", "Approved", `Summary approved for ${t}`) : line("removed", "Withdrawn", `Summary approval withdrawn for ${t}`));
+        if (op.path[2] === "subscription") out.push(op.value ? line("changed", "Label", `${t} gets a ${esc(op.value)} label`) : line("removed", "Label", `Subscription label removed from ${t}`));
+        if (op.path[2] === "event_url") out.push(op.value ? line("changed", "Link", `Event link for ${t}: ${esc(op.value)}`) : line("changed", "Link", `Event link for ${t} chosen automatically again`));
       }
     } else {
       itemList(before.quotes, after.quotes, out, "Quote", (x) => `“${x.text}”`);

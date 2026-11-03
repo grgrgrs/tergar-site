@@ -8,7 +8,8 @@ milestone 3, when the collector writes this file itself.
 - Each event gets a stable id (title + start date), so groups can select it.
 - The copied Description is NOT exported (it is never published).
 - Review decisions already recorded in shared-events.yaml (review_cleared,
-  summary_approved) are kept when the file is regenerated.
+  summary_approved) and hand-set labels (subscription, event_url) are kept
+  when the file is regenerated.
 
 Run:  py -3.9 tools/export_shared_events.py
 """
@@ -120,6 +121,9 @@ def main():
             "review_cleared": bool(prev.get("review_cleared", False)),
             "summary_approved": bool(prev.get("summary_approved", False))
                                 and prev.get("summary") == clean_value(r.get("Summary")),
+            # curated by hand in the dashboard; kept when the file is regenerated
+            "subscription": prev.get("subscription") if prev.get("subscription") in ("JOL", "VOL") else None,
+            "event_url": prev.get("event_url") or None,
             "collector_source": r.get("_source"),
             "date_fetched": r.get("Date fetched"),
         })

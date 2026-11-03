@@ -333,7 +333,7 @@ async function libraryView(user, env) {
     <td>${e.needs_review ? `<span class="badge warn">${esc(e.needs_review)}</span><div class="small">cleared: ${yes(e.review_cleared)}</div>` : "no"}</td>
     <td>${e.summary ? yes(e.summary_approved) : "none"}</td>
     <td>${esc((usedBy[e.id] || []).join(", ") || "-")}</td></tr>`).join("");
-  const series = shared.sharedSeriesList.map((s) => `<li><strong>${esc(s.title)}</strong> · ${esc(s.weekday)} ${esc(s.start_time)} · ${esc(s.format)}${s.requires ? " · requires " + esc(s.requires) : ""}</li>`).join("");
+  const series = shared.sharedSeriesList.map((s) => `<li><strong>${esc(s.title)}</strong> · ${esc(s.weekday)} ${esc(s.start_time)} · ${esc(s.format)}${s.has_prerequisites ? " · has prerequisites" : ""}${s.subscription ? " · " + esc(s.subscription) : ""}</li>`).join("");
   const lib = shared.library;
   const pend = (k) => when(pending.some((c) => c.id === `shared:${k}`), ` <a class="pend" href="${changeUrl(`shared:${k}`)}">change pending</a>`);
   return shell(user, "library", "Shared Library", `

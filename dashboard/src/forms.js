@@ -4,7 +4,7 @@
 // only script adds rows from a <template>. Parsing validates everything:
 // the dashboard never trusts the browser.
 
-import { esc, accessLine, isoDate } from "../../lib/render.js";
+import { esc, eventLink, isoDate } from "../../lib/render.js";
 import { groupFile, SHARED_EVENTS, LIBRARY } from "./data.js";
 
 export class FormError extends Error {
@@ -206,6 +206,8 @@ function pickList(key, label, hint) {
 
 const CADENCES = [["weekly", "Every week"], ["every_other_week", "Every other week"], ["monthly_weeks", "Certain weeks of the month"]];
 const FORMATS = [["in_person", "In person"], ["zoom", "Zoom"], ["both", "In person and Zoom"]];
+const SUBS = [["", "None"], ["JOL", "Joy of Living Online (JOL)"], ["VOL", "Vajrayana Online (VOL)"]];
+const subOf = (v) => (v === "JOL" || v === "VOL" ? v : null);
 
 function meetingRow(p, s) {
   const weeks = new Set((s.weeks || []).map(Number));
@@ -221,7 +223,8 @@ function meetingRow(p, s) {
     ${input(`${p}-place`, "Place", s.place, { wide: true, max: 200 })}
     ${select(`${p}-zoom_access`, "Zoom link", [["on_request", "On request (people email the group)"], ["shown", "Shown on the page"]], s.zoom_access || "on_request")}
     ${input(`${p}-zoom_url`, "Zoom link (only if shown)", s.zoom_url, { wide: true, max: 300, hint: "Publishing a Zoom link makes it public. Leave empty when access is on request." })}
-    ${input(`${p}-requires`, "Requires (optional)", s.requires, { wide: true, max: 300, hint: "Prerequisite text, if any." })}
+    <div class="f wide">${check(`${p}-has_prerequisites`, "Has prerequisites (shows a \u201cHas prerequisites\u201d label linked to the event page)", s.has_prerequisites === true)}</div>
+    ${select(`${p}-subscription`, "Subscription needed", SUBS, s.subscription || "")}
     ${textarea(`${p}-notes`, "Notes (optional)", s.notes, { rows: 2, max: 600 })}
     ${input(`${p}-start_date`, "Starts (optional)", isoDate(s.start_date) || "", { type: "date" })}
     ${input(`${p}-end_date`, "Ends (optional)", isoDate(s.end_date) || "", { type: "date" })}
@@ -239,7 +242,7 @@ const schedule = {
     const sharedRows = shared.sharedSeriesList.map((s) => {
       const place = inSeries[s.id] ? "schedule" : inRecurring[s.id] ? "recurring" : "";
       const feat = !!(inSeries[s.id] || inRecurring[s.id] || {}).featured;
-      return `<tr><td><strong>${esc(s.title)}</strong>${s.host ? `<div class="small">${esc(s.host)}</div>` : ""}<div class="small">${esc(s.weekday)} ${esc(s.start_time)}${s.requires ? ` · requires ${esc(s.requires)}` : ""}</div></td>
+      return `<tr><td><strong>${esc(s.title)}</strong>${s.host ? `<div class="small">${esc(s.host)}</div>` : ""}<div class="small">${esc(s.weekday)} ${esc(s.start_time)}${s.has_prerequisites ? " · has prerequisites" : ""}${s.subscription ? ` · ${esc(s.subscription)}` : ""}</div></td>
         <td><select name="sh-${esc(s.id)}-place">
           <option value=""${!place ? " selected" : ""}>Not shown</option>
           <option value="schedule"${place === "schedule" ? " selected" : ""}>Meeting schedule (our group hosts it)</option>
@@ -291,7 +294,8 @@ const schedule = {
         anchor_date: cadence === "every_other_week" ? anchor : null,
         start_time, time_zone: base.time_zone || g.time_zone, format,
         place: r.get("place", 200), zoom_access: usesZoom ? zoom_access : (base.zoom_access || null), zoom_url,
-        requires: r.get("requires", 300), notes: r.get("notes", 600), start_date, end_date,
+        has_prerequisites: r.on("has_prerequisites") || null, subscription: subOf(r.get("subscription", 3)),
+        notes: r.get("notes", 600), start_date, end_date,
       })));
       const feat = r.on("featured");
       if (feat) featuredCount.n++;
@@ -375,7 +379,8 @@ function localEventRow(p, e) {
     ${input(`${p}-time`, "Start time (optional, local)", e.time, { type: "time" })}
     ${input(`${p}-format`, "Format", e.format, { max: 100, placeholder: "In person / Online / ..." })}
     ${input(`${p}-place`, "Place", e.place, { wide: true, max: 200 })}
-    ${input(`${p}-requires`, "Requires (optional)", e.requires, { wide: true, max: 300 })}
+    <div class="f wide">${check(`${p}-has_prerequisites`, "Has prerequisites (shows a \u201cHas prerequisites\u201d label linked to the event page)", e.has_prerequisites === true)}</div>
+    ${select(`${p}-subscription`, "Subscription needed", SUBS, e.subscription || "")}
     ${textarea(`${p}-description`, "Description (our own words)", e.description, { rows: 3, max: 1200 })}
     ${input(`${p}-url`, "More information / registration link", e.url, { wide: true })}
     ${input(`${p}-note`, "Local note (optional)", e._note, { wide: true, max: 300 })}
@@ -392,14 +397,14 @@ const events = {
       .sort((a, b) => String(a.sort_date || "9999").localeCompare(String(b.sort_date || "9999")));
     const rowsHtml = list.map((e) => {
       const c = chosen[e.id] || {};
-      const [kind] = accessLine(e.restricted, e.prerequisites);
       const flags = [
         e.needs_review && !e.review_cleared ? `<span class="badge warn">held for review: ${esc(e.needs_review)}</span>` : "",
         e.summary && !e.summary_approved ? `<span class="badge">summary awaiting approval</span>` : "",
-        kind === "requires" ? `<span class="badge">restricted</span>` : kind === "unknown" ? `<span class="badge">access not stated</span>` : "",
+        e.restricted === "yes" ? `<span class="badge">has prerequisites</span>` : "",
+        e.subscription ? `<span class="badge">${esc(e.subscription)}</span>` : "",
         e.last_date && String(e.last_date) < today ? `<span class="badge">past</span>` : "",
       ].join(" ");
-      return `<tr><td><a href="${esc(e.source_url || "#")}" target="_blank" rel="noopener">${esc(e.title)}</a>
+      return `<tr><td><a href="${esc(eventLink(e) || "#")}" target="_blank" rel="noopener">${esc(e.title)}</a>
           <div class="small">${esc(e.start ? `${e.start}${e.end && e.end !== e.start ? " to " + e.end : ""}` : e.date_text || "no dates")}${e.format ? " · " + esc(e.format) : ""}</div><div>${flags}</div></td>
         <td>${check(`ev-${esc(e.id)}-show`, "Show", !!chosen[e.id])}</td>
         <td>${check(`ev-${esc(e.id)}-featured`, "Featured", !!c.featured)}</td>
@@ -441,7 +446,8 @@ const events = {
       if (time && !/^\d{2}:\d{2}$/.test(time)) errs.push(`${label}: time looks wrong`);
       const id = id0 && existing[id0] ? id0 : uniqueId(title, taken);
       locals.push(mergeKeep(existing[id], { id, title, teachers: r.get("teachers", 200), start, end, time, format: r.get("format", 100),
-        place: r.get("place", 200), requires: r.get("requires", 300), description: r.get("description", 1200),
+        place: r.get("place", 200), has_prerequisites: r.on("has_prerequisites") || null,
+        subscription: subOf(r.get("subscription", 3)), description: r.get("description", 1200),
         url: checkUrl(errs, label, r.get("url", 300)) }));
       const show = r.on("show") || r.on("featured");
       if (r.on("featured")) featured++;
@@ -468,19 +474,22 @@ export const groupBlockFile = (ctx) => groupFile(ctx.g.path);
 // ======================================================= shared library
 
 const review = {
-  label: "Event review and summary approval",
+  label: "Event review, labels and links",
   file: SHARED_EVENTS,
   render({ shared, today }) {
     const list = shared.sharedEventsList.filter((e) => !e.last_date || String(e.last_date) >= today);
-    return `<p class="small">An event flagged by the collector stays off the live pages until you clear it. A summary stays off until you approve it. If the collector later rewrites a summary, its approval resets.</p>
-    <div class="dash-table"><table><thead><tr><th>Event</th><th>Flag</th><th>Summary</th></tr></thead><tbody>
-    ${list.map((e) => `<tr><td><a href="${esc(e.source_url || "#")}" target="_blank" rel="noopener">${esc(e.title)}</a><div class="small">${esc(e.start || e.date_text || "no dates")}</div></td>
+    return `<p class="small">An event flagged by the collector stays off the live pages until you clear it. A summary stays off until you approve it. If the collector later rewrites a summary, its approval resets.
+      "Has prerequisites" comes from the collector (the source page says restricted or prerequisites apply). Set a subscription label by hand. The event link is the page the title, register link and labels open; it is chosen automatically (never the whole Tergar calendar) unless you enter one.</p>
+    <div class="dash-table"><table><thead><tr><th>Event</th><th>Flag</th><th>Summary</th><th>Labels and link</th></tr></thead><tbody>
+    ${list.map((e) => `<tr><td><a href="${esc(eventLink(e) || "#")}" target="_blank" rel="noopener">${esc(e.title)}</a><div class="small">${esc(e.start || e.date_text || "no dates")}</div>${e.restricted === "yes" ? `<div><span class="badge">has prerequisites</span></div>` : ""}</td>
       <td>${e.needs_review ? `<div class="small">${esc(e.needs_review)}</div>${check(`rv-${esc(e.id)}-cleared`, "Cleared to publish", !!e.review_cleared)}` : `<span class="small">none</span>`}</td>
-      <td>${e.summary ? `<div class="small summary-text">${esc(e.summary)}</div>${check(`rv-${esc(e.id)}-approved`, "Approved", !!e.summary_approved)}` : `<span class="small">no summary</span>`}</td></tr>`).join("")}
+      <td>${e.summary ? `<div class="small summary-text">${esc(e.summary)}</div>${check(`rv-${esc(e.id)}-approved`, "Approved", !!e.summary_approved)}` : `<span class="small">no summary</span>`}</td>
+      <td>${select(`rv-${esc(e.id)}-subscription`, "Subscription", SUBS, e.subscription || "")}
+        ${input(`rv-${esc(e.id)}-event_url`, "Event link (optional)", e.event_url || "", { max: 400, placeholder: "automatic", hint: `Now: ${esc(eventLink(e) || "none")}` })}</td></tr>`).join("")}
     </tbody></table></div>`;
   },
   parse(fd, { shared, today }) {
-    const ops = [];
+    const ops = [], errs = [];
     for (const e of shared.sharedEventsList.filter((x) => !x.last_date || String(x.last_date) >= today)) {
       if (e.needs_review) {
         const want = on(fd, `rv-${e.id}-cleared`);
@@ -490,7 +499,12 @@ const review = {
         const want = on(fd, `rv-${e.id}-approved`);
         if (want !== !!e.summary_approved) ops.push({ path: ["events", { id: e.id }, "summary_approved"], value: want });
       }
+      const sub = subOf(text(fd, `rv-${e.id}-subscription`, 3));
+      if (sub !== subOf(e.subscription)) ops.push({ path: ["events", { id: e.id }, "subscription"], value: sub || undefined });
+      const url = checkUrl(errs, `"${e.title}"`, text(fd, `rv-${e.id}-event_url`, 400)) || null;
+      if (url !== (e.event_url || null)) ops.push({ path: ["events", { id: e.id }, "event_url"], value: url || undefined });
     }
+    if (errs.length) throw new FormError(errs);
     if (!ops.length) throw new FormError(["Nothing was changed"]);
     return ops;
   },

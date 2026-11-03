@@ -6,6 +6,8 @@
 # format: in_person | zoom | both
 # zoom_access: on_request (default) | shown (needs zoom_url; published on the page)
 # Zoom links are not stored here while access is "on_request".
+# has_prerequisites: true -> "Has prerequisites" pill; subscription: JOL or VOL -> pill.
+# (requires: text is kept for reference and not shown on the page.)
 
 series:
   - id: nectar-wednesday
@@ -61,7 +63,8 @@ series:
     format: zoom
     place: Online (Zoom)
     zoom_access: on_request
-    requires: Vajrayana Online subscription
+    requires: Vajrayana Online subscription   # kept for reference; not shown
+    subscription: VOL
     start_date: 2026-10-12
     notes: null
     links: []
@@ -77,6 +80,7 @@ series:
     format: zoom
     place: Online (Zoom)
     zoom_access: on_request
-    requires: Vajrayana Online subscription
+    requires: Vajrayana Online subscription   # kept for reference; not shown
+    subscription: VOL
     notes: null
     links: []

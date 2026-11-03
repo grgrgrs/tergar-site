@@ -4,7 +4,7 @@
   --bg:#e6e6e6; --page:#ffffff; --text:#2b2b2b; --muted:#5a5f66; --line:#dedede;
   --link:#1a62d6; --title:#24479a;
   --green:#d3ebb0; --aqua:#c4f3ee; --cream:#fdf3dc; --lavender:#e6e3f6; --sky:#dce8fb;
-  --warn:#8a5a00; --warn-soft:#fbf1dc; --req:#7a2e0e; --req-soft:#fdeee6;
+  --warn:#8a5a00; --warn-soft:#fbf1dc; --pill:#eceef1; --pill-text:#454b53; --pill-pre:#f6ead2; --pill-pre-text:#6e4d0b;
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
@@ -12,7 +12,7 @@
     --bg:#121417; --page:#1c1f24; --text:#e6e4df; --muted:#a2a9b2; --line:#30353c;
     --link:#7fb0ff; --title:#9fb8ff;
     --green:#26341c; --aqua:#173634; --cream:#352d1c; --lavender:#2a2740; --sky:#1d2a40;
-    --warn:#e6b65c; --warn-soft:#332a18; --req:#f2b391; --req-soft:#3a2219;
+    --warn:#e6b65c; --warn-soft:#332a18; --pill:#2b3038; --pill-text:#c3c9d1; --pill-pre:#3a2f1a; --pill-pre-text:#e9c98a;
     color-scheme:dark;
   }
 }
@@ -20,7 +20,7 @@
   --bg:#121417; --page:#1c1f24; --text:#e6e4df; --muted:#a2a9b2; --line:#30353c;
   --link:#7fb0ff; --title:#9fb8ff;
   --green:#26341c; --aqua:#173634; --cream:#352d1c; --lavender:#2a2740; --sky:#1d2a40;
-  --warn:#e6b65c; --warn-soft:#332a18; --req:#f2b391; --req-soft:#3a2219;
+  --warn:#e6b65c; --warn-soft:#332a18; --pill:#2b3038; --pill-text:#c3c9d1; --pill-pre:#3a2f1a; --pill-pre-text:#e9c98a;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -37,7 +37,7 @@ h1,h2,h3{margin:0}
 .blk:last-child{border-bottom:none}
 
 /* Header: artwork banner (no Tergar logo or branding for now) */
-.hdr{background-size:cover;background-position:center;color:#fff;padding:34px 24px 30px;
+.hdr{background-size:cover;background-position:75% 25%;color:#fff;padding:34px 24px 30px;
   border-radius:4px;border-bottom:none}
 .hdr h1{font-size:34px;font-weight:700;letter-spacing:.2px;text-shadow:0 1px 3px rgba(0,0,0,.5)}
 .hdr-sub{margin-top:4px;font-size:17px;opacity:.95;text-shadow:0 1px 2px rgba(0,0,0,.5)}
@@ -57,6 +57,7 @@ h1,h2,h3{margin:0}
 
 h3{font-size:17px;font-weight:700;margin-top:4px}
 .title-blue{color:var(--title);font-size:20px;font-weight:700}
+.title-blue a{color:inherit}
 .sub-h{color:var(--title);font-weight:700;margin-top:8px}
 .with{font-weight:700;margin-bottom:2px}
 .meta{color:var(--muted);font-size:14.5px}
@@ -71,14 +72,9 @@ h3{font-size:17px;font-weight:700;margin-top:4px}
 .kicker{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
   background:var(--sky);display:inline-block;padding:2px 8px;border-radius:3px;margin-top:4px}
 .feat .summary{margin:8px 0}
-.requires{background:var(--req-soft);color:var(--req);border-left:3px solid var(--req);
-  padding:6px 10px;margin:6px 0;font-size:14px;border-radius:0 4px 4px 0}
-.requires.unknown{background:var(--warn-soft);color:var(--warn);border-left-color:var(--warn)}
-.requires.small{font-size:13px;padding:3px 8px;margin:3px 0 0}
 .localnote{background:var(--cream);padding:8px 10px;margin:8px 0;border-radius:4px;font-size:14.5px}
 .contemplation{border:2px solid var(--muted);padding:8px 12px;margin-top:10px}
 .cta{display:inline-block;margin-top:6px}
-.attrib{font-size:13px;color:var(--muted);margin-top:4px}
 
 .pa-list,.res-list{margin:0;padding-left:20px}
 .pa-list li,.res-list li{margin-bottom:8px}
@@ -88,6 +84,16 @@ h3{font-size:17px;font-weight:700;margin-top:4px}
 .pa-sub:first-of-type{margin-top:4px}
 .tag{display:inline-block;font-size:12px;padding:1px 7px;border-radius:999px;
   background:var(--sky);color:var(--title);margin-left:4px}
+
+/* Pills: small labels under an event (prerequisites, subscription, language) */
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}
+.pills-inline{display:inline-flex;margin:0 0 0 4px;vertical-align:1px}
+.pill{display:inline-block;font:400 12px/1.5 Arial,sans-serif;padding:1px 9px;border-radius:999px;
+  background:var(--pill);color:var(--pill-text);white-space:nowrap}
+.pill-prereq{background:var(--pill-pre);color:var(--pill-pre-text)}
+a.pill-link{font-weight:400;text-decoration:none}
+a.pill-link:hover,a.pill-link:focus-visible{text-decoration:underline;filter:brightness(.95)}
+a.pill-link:focus-visible{outline:2px solid var(--link);outline-offset:1px}
 
 .foot{text-align:center;font-size:13.5px;color:var(--muted);border-top:1px solid var(--line);
   padding-top:12px;border-bottom:none}

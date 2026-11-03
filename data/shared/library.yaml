@@ -3,6 +3,12 @@
 # Seeded from the Venice (Oct 30, 2026) and Stuart (Nov 1, 2026) newsletters.
 # Text here is our own short wording; link to Tergar for the full content.
 
+# Site-wide default language. A group whose meetings are in another language
+# sets "language:" in its own file. Events with no language listed are
+# assumed to be in this language. Language pills show only when an event's
+# language differs from the group's.
+default_language: English
+
 quotes:
   - id: ma-jaya-quiet-mind
     text: "Quiet the mind, and the soul will speak."

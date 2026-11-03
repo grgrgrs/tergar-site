@@ -129,6 +129,8 @@ Open `site-preview\us\venice-fl\index.html` in a browser to see a page.
   - contact addresses, until the group's `consent: true`
 
   Set those flags in the dashboard (Shared Library, and each group's header block), or by hand in `data\shared-events.yaml` and the group file.
+- **Pills** under each event or meeting replace requirement text: "Has prerequisites" (shared events: the collector's `restricted: yes`; local items: `has_prerequisites: true`), "JOL"/"VOL" (`subscription:`, set by hand), and a language pill when the event's language differs from the group's (`language:` in the group file, else `default_language` in `data\shared\library.yaml`).
+- **Event link**: one link per event (title, pills, register link). It is `event_url` if set (Shared Library), else the registration page, else the Tergar detail page; never the whole Tergar calendar or a prerequisites PDF.
 - Each build writes a report to `data\build-report-preview.txt` or `data\build-report-publish.txt`.
 
 ## Dashboard (milestone 2): admin.tergargroups.org
