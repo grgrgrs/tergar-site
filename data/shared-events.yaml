@@ -69,8 +69,8 @@ events:
     to 15 November 2026, in Chinese, and is open to everyone with no prerequisites.
   needs_review: Summary mentions name 'Mingyur Rinpoche', teacher 'Mingyur Rinpoche' not found in extracted
     fields
-  review_cleared: false
-  summary_approved: false
+  review_cleared: true
+  summary_approved: true
   collector_source: calendar
   date_fetched: '2026-11-02'
 - id: calming-the-mind-joy-of-living-level-1-2026-11-07
