@@ -168,8 +168,8 @@ events:
     none is given here. Participation is restricted and requires meeting prerequisites, such as the three
     Joy of Living levels, completed ngöndro, or a long-term daily meditation practice with retreat experience.
   needs_review: Year not stated on page; assumed 2026
-  review_cleared: false
-  summary_approved: false
+  review_cleared: true
+  summary_approved: true
   collector_source: pol
   date_fetched: '2026-11-02'
 - id: anytime-anywhere-meditation-aam-2026-11-19
