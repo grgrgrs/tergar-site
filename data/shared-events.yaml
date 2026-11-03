@@ -129,10 +129,14 @@ events:
     9 to November 30 and is included in a Vajrayana Online membership; the host is not listed. Attendance
     is restricted to people who have attended the Path of Liberation Level 5 retreat.
   needs_review: Year not stated on page; assumed 2026
-  review_cleared: false
-  summary_approved: false
+  review_cleared: true
+  summary_approved: true
   collector_source: vajrayana
   date_fetched: '2026-11-02'
+  summary_edited: This is an online four-week workshop led by Tergar Guide Antonia Sumbundu, helping
+    participants complete their Path of Liberation Level 5 homework or return to those teachings. It
+    runs from November 9 to November 30 and is included in a Vajrayana Online membership. Attendance
+    is restricted to people who have attended the Path of Liberation Level 5 retreat.
 - id: upcoming-path-of-liberation-levels-1-2-malaysia-2026-11-10
   title: Upcoming Path of Liberation Levels 1 & 2 - Malaysia
   start: '2026-11-10'
