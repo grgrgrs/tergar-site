@@ -199,7 +199,7 @@ events:
     not you have meditated before.
   needs_review: null
   review_cleared: false
-  summary_approved: false
+  summary_approved: true
   collector_source: calendar
   date_fetched: '2026-11-02'
 - id: 開心禪三階-awakening-wisdom-joy-of-living-3-2026-11-19
