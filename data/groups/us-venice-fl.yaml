@@ -18,7 +18,7 @@ about: >-
 # Role address only, and published only once the group has consented.
 # The address itself is kept in data/private/contacts.yaml (not in git).
 contact:
-  consent: false
+  consent: true
 
 first_announcement: null
 
