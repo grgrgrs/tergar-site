@@ -265,6 +265,7 @@ events:
   summary_approved: true
   collector_source: calendar
   date_fetched: '2026-11-02'
+  event_url: https://events.tergar.org/events/detail/finding-freedom-in-lifes-transitions-teachings-on-the-six-bardos-NjUx?lang=en
 - id: the-primordial-secret-dzogchen-instructions-on-trekcho-medit-2026-12-11
   title: 'The Primordial Secret: Dzogchen Instructions on Trekchö Meditation'
   start: '2026-12-11'
