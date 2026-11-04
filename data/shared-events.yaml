@@ -329,8 +329,8 @@ events:
     who meet Tergar's eligibility criteria for the Path of Liberation.
   needs_review: 'Year corrected: site lists ''december 30 - january 3, 2026'' (one year for a December-January
     range); end date set to 2027-01-03. Confirm with organizer'
-  review_cleared: false
-  summary_approved: false
+  review_cleared: true
+  summary_approved: true
   collector_source: calendar
   date_fetched: '2026-11-02'
 - id: awakening-wisdom-joy-of-living-3-2027-01-10
