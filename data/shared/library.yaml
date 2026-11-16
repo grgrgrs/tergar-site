@@ -19,6 +19,13 @@ from_tergar:
     title: "Buddhism for Beginners: a new video message from Mingyur Rinpoche"
     text: Mingyur Rinpoche introduces the four noble truths as a practical path.
     url: https://www.youtube.com/watch?v=Jo4oWbhJ2ls
+  - id: a-world-of-difference-with-mingyur-rinpoche-in-mia
+    title: A World of Difference with Mingyur Rinpoche in Miami, FL - April 7, 2027 @ 6:30 PM in Coral
+      Gables FL
+    text: "Join Yongey Mingyur Rinpoche for a special talk on his new book, A World of Difference:
+      Finding Peace and Freedom in Times of Fear and Chaos. University of Miami – Lakeside Village
+      Expo Center, 1280 Stanford Drive, Coral Gables, FL"
+    url: https://www.eventbrite.com/e/a-world-of-difference-with-mingyur-rinpoche-in-miami-fl-tickets-2004796583549
 
 resources:
   - id: four-noble-truths
