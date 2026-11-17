@@ -299,9 +299,20 @@ events:
     Level 2 retreat, or ngöndro transmission, nature of mind pointing out and five years of regular practice.'
   needs_review: null
   review_cleared: false
-  summary_approved: false
+  summary_approved: true
   collector_source: calendar
   date_fetched: '2026-11-02'
+  summary_edited: >-
+    In this second retreat of Tergar’s new year-long Dorje Drolö Dzogchen transmission, Mingyur
+    Rinpoche will give teachings from The Heart Essence of the Primordial Secret. Focusing on the
+    potent union of shamatha and vipashyana within the Dzogchen view, Rinpoche will guide us on
+    marrying a naturally settled mind with the brilliant recognition of pure awareness.
+  
+  
+    Offered both in-person and live-streamed from Tergar Osel Ling Monastery in Kathmandu, Mingyur
+    Rinpoche will offer essential instructions on this pristine method passed on from master to
+    student through generations.
+  event_url: https://events.tergar.org/events/detail/the-primordial-secret-dzogchen-instructions-on-trekcho-meditation-NjUw
 - id: year-end-retreat-dzogchen-trekcho-teachings-2026-12-30
   title: 'Year-End Retreat: Dzogchen Trekchö Teachings'
   start: '2026-12-30'
